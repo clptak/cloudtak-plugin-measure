@@ -1,4 +1,5 @@
 # cloudtak-plugin-measure
+<img width="2316" height="1267" alt="image" src="https://github.com/user-attachments/assets/f8825094-cd24-4606-8726-68378c602bed" />
 
 A CloudTAK plugin to measure distances between points or along a line string and to generate a
 terrain profile without creating a CoT object.
@@ -108,7 +109,7 @@ guard applies.
 
 ## Still to verify
 
-7. ⬜ Snap layer picker lists the snapping basemaps, and selecting one routes along the network.
-8. ⬜ Snapping zoom clamp logs and bounds the tile-cover on a basemap with a bogus `maxzoom`.
-9. ⬜ Closing the ruler leaves core's Drawing Tools back on "No Snapping".
+7. ✅ Snap layer picker lists the snapping basemaps, and selecting one routes along the network.
+8. ✅ Snapping zoom clamp logs and bounds the tile-cover on a basemap with a bogus `maxzoom`.
+9. ✅ Closing the ruler leaves core's Drawing Tools back on "No Snapping".
 10. ⬜ Keyboard shortcuts, including Backspace inside the snap-layer picker not deleting a point.
