@@ -1,0 +1,9 @@
+{
+    "name": "cloudtak-plugin-measure",
+    "version": "0.1.0",
+    "description": "Caltopo-style ruler for CloudTAK — distance, bearing and terrain profile without creating a CoT feature",
+    "type": "module",
+    "main": "index.ts",
+    "license": "ISC",
+    "comment": "Dependencies are intentionally empty. This plugin is bundled by Vite from ~/CloudTAK/api/web and resolves all imports (terra-draw, turf, vue, maplibre-gl) against that project's node_modules via the symlinked-plugin-resolve plugin in api/web/vite.config.js. Do not npm install here."
+}
