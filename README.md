@@ -93,6 +93,19 @@ measuring, and suppressed while focus is in a form field (`isTypingTarget`).
 Undo uses terra-draw's undo stack, so a "step" is whatever it recorded — normally one vertex,
 but in route-snap mode one click can append a whole routed run, which undo reverses as a unit.
 
+**Undo/redo is opt-in in terra-draw.** The `TerraDraw` constructor must be given an `undoRedo`
+option; without it no `undoRedoCoordinator` is built and `undo()` / `canUndo()` silently return
+false — no error, the button just stays disabled forever. Both levels are required and they
+cover mutually exclusive states:
+
+| Level | Active when |
+|---|---|
+| `TerraDrawModeUndoRedo` | `state === 'drawing'` — mid-line |
+| `TerraDrawSessionUndoRedo` | NOT drawing — after finish, while parked in static |
+
+`keyboardShortcuts` is deliberately not passed; the plugin binds its own so the typing-target
+guard applies.
+
 ## Still to verify
 
 7. ⬜ Snap layer picker lists the snapping basemaps, and selecting one routes along the network.

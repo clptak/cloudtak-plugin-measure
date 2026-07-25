@@ -159,6 +159,22 @@ export default class MeasureDraw {
                 isValidId: (id: string | number): boolean => typeof id === 'string',
                 getId: () => randomUUID(),
             },
+            /**
+             * Undo/redo is opt-in. Without this option terra-draw never builds
+             * an `undoRedoCoordinator`, and `undo()` / `canUndo()` silently
+             * return false — the button stays disabled and shortcuts no-op.
+             *
+             * Both levels are needed and they cover different states:
+             *  - modeLevel   works only while `state === 'drawing'`, i.e. mid-line
+             *  - sessionLevel works only while NOT drawing, i.e. after finish
+             *
+             * `keyboardShortcuts` is deliberately omitted — we bind our own so
+             * the `isTypingTarget` guard applies.
+             */
+            undoRedo: {
+                modeLevel: new terraDraw.TerraDrawModeUndoRedo(),
+                sessionLevel: new terraDraw.TerraDrawSessionUndoRedo(),
+            },
             modes,
         });
 
@@ -299,6 +315,19 @@ export default class MeasureDraw {
             console.warn('[measure] undo failed', err);
         }
         this.recompute();
+
+        // Undoing a finished measurement all the way back to nothing would
+        // otherwise strand the user in static mode with an empty map and no
+        // way to draw except triggering the clear prompt.
+        if (this.finished.value && !this.measurement.value.coordinates.length) {
+            this.finished.value = false;
+            this.promptNewMeasurement.value = false;
+            try {
+                this.draw.setMode(this.modeForSnapping());
+            } catch (err) {
+                console.warn('[measure] could not re-arm draw surface', err);
+            }
+        }
     }
 
     /** Step forward one previously undone change */
@@ -338,6 +367,14 @@ export default class MeasureDraw {
     /** Discard the current measurement but stay active and ready to draw */
     public clear(): void {
         this.draw.clear();
+
+        // Otherwise undo would reach back into the discarded measurement
+        try {
+            this.draw.clearUndoRedoHistory();
+        } catch {
+            // Older terra-draw builds may not expose this
+        }
+
         this.measurement.value = EMPTY_MEASUREMENT;
         this.finished.value = false;
         this.promptNewMeasurement.value = false;

@@ -110,6 +110,14 @@
                     Undo
                 </button>
                 <button
+                    v-if='redoAvailable'
+                    class='btn btn-sm'
+                    title='Restore the last removed point (Cmd/Ctrl+Shift+Z)'
+                    @click='surface.redo()'
+                >
+                    Redo
+                </button>
+                <button
                     class='btn btn-sm'
                     :disabled='!measurement.coordinates.length'
                     @click='surface.clear()'
@@ -187,6 +195,7 @@ const measurement = computed(() => {
 });
 
 const undoAvailable = computed(() => surface.value?.undoAvailable.value ?? false);
+const redoAvailable = computed(() => surface.value?.redoAvailable.value ?? false);
 const promptNewMeasurement = computed(() => surface.value?.promptNewMeasurement.value ?? false);
 
 const snapOptions = computed(() => {
