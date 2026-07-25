@@ -90,6 +90,13 @@
                 >
                     Save as Line
                 </button>
+                <button
+                    class='btn btn-sm ms-auto'
+                    title='Exit measure mode'
+                    @click='close'
+                >
+                    Close
+                </button>
             </div>
 
             <div
@@ -131,8 +138,8 @@
 </template>
 
 <script setup lang='ts'>
-import { computed, ref, watch } from 'vue';
-import { surface, unit, pinia } from '../lib/state.ts';
+import { computed, onBeforeUnmount, ref, watch } from 'vue';
+import { surface, unit, pinia, close } from '../lib/state.ts';
 import { snappingOptions, selectSnappingLayer, saveLine, NO_SNAPPING } from '../lib/core-bridge.ts';
 import { DISTANCE_UNITS, formatDistance, formatBearing } from '../lib/units.ts';
 
@@ -147,6 +154,12 @@ const snapOptions = computed(() => {
 });
 
 const snapLayer = ref(NO_SNAPPING);
+
+// The floating pane has its own X (FloatingPane.vue:27). Dismissing the pane by
+// any route must also leave measure mode, otherwise the ruler keeps swallowing
+// map clicks with no visible UI. `close()` is idempotent, so the programmatic
+// path (close() -> pane removed -> unmount -> close()) is harmless.
+onBeforeUnmount(() => close());
 
 const confirmingSave = ref(false);
 const saving = ref(false);
@@ -176,9 +189,10 @@ async function save(): Promise<void> {
         return;
     }
 
-    // The measurement is now a real feature; drop the ephemeral overlay so the
-    // user isn't looking at the same line twice.
-    surface.value?.clear();
+    // The measurement is now a real CoT feature. Leave measure mode entirely so
+    // the user isn't looking at the same line twice, once as an ephemeral
+    // overlay and once as the saved feature.
+    close();
 }
 
 watch(snapLayer, async (layer) => {
