@@ -26,6 +26,7 @@ import {
     measure,
     nearestWithin,
     snapThresholdKm,
+    isTypingTarget,
     EMPTY_MEASUREMENT,
     type Measurement,
 } from './geometry.ts';
@@ -59,6 +60,17 @@ export default class MeasureDraw {
     private markerPoints: Set<[number, number]>;
     /** Swallows canvas clicks so core never opens a radial menu while measuring */
     private swallowClick: (ev: MouseEvent) => void;
+    /** Window-level shortcuts, live only while measuring */
+    private onKeyDown: (ev: KeyboardEvent) => void;
+
+    /** Whether terra-draw currently has an undoable change */
+    public readonly undoAvailable: Ref<boolean>;
+    /** Whether terra-draw currently has a redoable change */
+    public readonly redoAvailable: Ref<boolean>;
+    /** A measurement has been completed and the surface is parked in static mode */
+    public readonly finished: Ref<boolean>;
+    /** The user clicked the map while finished — the UI should offer to start over */
+    public readonly promptNewMeasurement: Ref<boolean>;
 
     /** Live measurement, updated on every vertex change */
     public readonly measurement: ShallowRef<Measurement>;
@@ -73,6 +85,10 @@ export default class MeasureDraw {
 
         this.measurement = shallowRef<Measurement>(EMPTY_MEASUREMENT);
         this.active = ref(false);
+        this.undoAvailable = ref(false);
+        this.redoAvailable = ref(false);
+        this.finished = ref(false);
+        this.promptNewMeasurement = ref(false);
         this.snapLayer = ref(NO_SNAPPING);
 
         this.markerPoints = new Set();
@@ -94,10 +110,15 @@ export default class MeasureDraw {
 
         type ModeList = ConstructorParameters<typeof terraDraw.TerraDraw>[0]['modes'];
 
+        // Both modes already default to these, but pinning them means an
+        // upstream default change can't silently move our shortcuts.
+        const keyEvents = { cancel: 'Escape', finish: 'Enter' };
+
         const modes: ModeList = [
             new terraDraw.TerraDrawLineStringMode({
                 editable: true,
                 snapping: { toCustom },
+                keyEvents,
                 styles: {
                     lineStringColor: () => MEASURE_COLOR,
                     lineStringWidth: () => 3,
@@ -118,6 +139,7 @@ export default class MeasureDraw {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 routing: routing as any,
                 maxPoints: 9999,
+                keyEvents,
                 styles: {
                     lineStringColor: () => MEASURE_COLOR,
                     routePointColor: () => MEASURE_COLOR,
@@ -146,8 +168,21 @@ export default class MeasureDraw {
 
         // NOTE: deliberately does NOT persist. Core's equivalent handler
         // (draw.ts:332) ends in `worker.db.add(feat, { authored: true })`.
-        this.draw.on('finish', () => {
+        this.draw.on('finish', (_id, context) => {
             this.recompute();
+
+            if (context.action !== 'draw') return;
+
+            // Park the surface so a stray click can't silently start a second
+            // line that the readout would ignore — `drawnCoordinates()` only
+            // ever reports the first LineString in the snapshot. The UI offers
+            // to clear instead.
+            this.finished.value = true;
+            try {
+                this.draw.setMode(STATIC_MODE);
+            } catch (err) {
+                console.warn('[measure] could not park draw surface', err);
+            }
         });
 
         this.onMoveEnd = () => {
@@ -176,6 +211,37 @@ export default class MeasureDraw {
         this.swallowClick = (ev: MouseEvent) => {
             if (!this.active.value) return;
             ev.stopPropagation();
+
+            // Finished measurement + a map click = the user is trying to draw
+            // again. Ask before discarding what's on screen.
+            if (this.finished.value) this.promptNewMeasurement.value = true;
+        };
+
+        /**
+         * Backspace / Delete removes the last vertex; Cmd/Ctrl+Z undoes and
+         * Cmd/Ctrl+Shift+Z redoes.
+         *
+         * Escape (cancel) and Enter (finish) are handled by terra-draw's own
+         * `keyEvents`, configured above — deliberately not duplicated here.
+         */
+        this.onKeyDown = (ev: KeyboardEvent) => {
+            if (!this.active.value) return;
+            if (isTypingTarget(ev.target)) return;
+
+            const mod = ev.metaKey || ev.ctrlKey;
+
+            if (mod && ev.key.toLowerCase() === 'z') {
+                ev.preventDefault();
+                if (ev.shiftKey) this.redo();
+                else this.undo();
+                return;
+            }
+
+            if (ev.key === 'Backspace' || ev.key === 'Delete') {
+                // Also stops Backspace triggering browser history navigation
+                ev.preventDefault();
+                this.undo();
+            }
         };
     }
 
@@ -208,6 +274,42 @@ export default class MeasureDraw {
 
     private recompute(): void {
         this.measurement.value = measure(this.drawnCoordinates());
+
+        try {
+            this.undoAvailable.value = this.draw.canUndo();
+            this.redoAvailable.value = this.draw.canRedo();
+        } catch {
+            this.undoAvailable.value = false;
+            this.redoAvailable.value = false;
+        }
+    }
+
+    /**
+     * Step back one change.
+     *
+     * This is terra-draw's own undo stack, so a "step" is whatever it recorded
+     * — normally one vertex, but in route-snap mode a single click can append a
+     * whole routed run of coordinates, and undo reverses that run as one unit.
+     */
+    public undo(): void {
+        if (!this.active.value) return;
+        try {
+            this.draw.undo();
+        } catch (err) {
+            console.warn('[measure] undo failed', err);
+        }
+        this.recompute();
+    }
+
+    /** Step forward one previously undone change */
+    public redo(): void {
+        if (!this.active.value) return;
+        try {
+            this.draw.redo();
+        } catch (err) {
+            console.warn('[measure] redo failed', err);
+        }
+        this.recompute();
     }
 
     private modeForSnapping(): string {
@@ -219,6 +321,7 @@ export default class MeasureDraw {
     public start(): void {
         if (this.active.value) return;
         this.map.getCanvas().addEventListener('click', this.swallowClick);
+        window.addEventListener('keydown', this.onKeyDown);
         this.draw.start();
         this.draw.setMode(this.modeForSnapping());
         this.active.value = true;
@@ -232,18 +335,33 @@ export default class MeasureDraw {
         this.draw.setMode(this.modeForSnapping());
     }
 
-    /** Discard the current measurement but stay active */
+    /** Discard the current measurement but stay active and ready to draw */
     public clear(): void {
         this.draw.clear();
         this.measurement.value = EMPTY_MEASUREMENT;
+        this.finished.value = false;
+        this.promptNewMeasurement.value = false;
+        this.undoAvailable.value = false;
+        this.redoAvailable.value = false;
         if (this.active.value) {
             this.draw.setMode(this.modeForSnapping());
         }
     }
 
+    /** Dismiss the "start a new measurement?" prompt, keeping what's drawn */
+    public dismissPrompt(): void {
+        this.promptNewMeasurement.value = false;
+    }
+
+    /** Re-arm drawing after a finished measurement, discarding the old line */
+    public restart(): void {
+        this.clear();
+    }
+
     /** End the session and remove the drawing from the map */
     public stop(): void {
         if (!this.active.value) return;
+        window.removeEventListener('keydown', this.onKeyDown);
         try {
             this.map.getCanvas().removeEventListener('click', this.swallowClick);
         } catch {
@@ -258,6 +376,10 @@ export default class MeasureDraw {
         }
         this.measurement.value = EMPTY_MEASUREMENT;
         this.active.value = false;
+        this.undoAvailable.value = false;
+        this.redoAvailable.value = false;
+        this.finished.value = false;
+        this.promptNewMeasurement.value = false;
         this.markerPoints = new Set();
     }
 

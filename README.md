@@ -76,8 +76,26 @@ Confirmed working locally:
 5. ✅ `db.feature` count unchanged after measuring — no CoT, nothing to Data Sync.
 6. ✅ `measure-*` sources exist while active and are gone after closing; core's `td-*` untouched.
 
-Still to verify (needs a server with snapping basemaps + a terrain basemap):
+## Keyboard
+
+| Key | Action |
+|---|---|
+| `Enter` | Finish the line |
+| `Esc` | Cancel the in-progress line |
+| `Backspace` / `Delete` | Remove the last point |
+| `Cmd`/`Ctrl` + `Z` | Undo |
+| `Cmd`/`Ctrl` + `Shift` + `Z` | Redo |
+
+`Enter` and `Esc` are terra-draw's own `keyEvents`, pinned explicitly in `measure-draw.ts` so an
+upstream default change can't move them. The rest are window-level listeners, live only while
+measuring, and suppressed while focus is in a form field (`isTypingTarget`).
+
+Undo uses terra-draw's undo stack, so a "step" is whatever it recorded — normally one vertex,
+but in route-snap mode one click can append a whole routed run, which undo reverses as a unit.
+
+## Still to verify
 
 7. ⬜ Snap layer picker lists the snapping basemaps, and selecting one routes along the network.
-8. ⬜ Terrain profile renders when 3D terrain is enabled.
-9. ⬜ Save as Line creates the CoT and exits measure mode.
+8. ⬜ Snapping zoom clamp logs and bounds the tile-cover on a basemap with a bogus `maxzoom`.
+9. ⬜ Closing the ruler leaves core's Drawing Tools back on "No Snapping".
+10. ⬜ Keyboard shortcuts, including Backspace inside the snap-layer picker not deleting a point.

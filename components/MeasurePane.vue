@@ -75,9 +75,40 @@
                 </table>
             </div>
 
+            <div
+                v-if='promptNewMeasurement'
+                class='cloudtak-accent rounded mx-1 my-2 px-2 py-2'
+            >
+                <div class='mb-2'>
+                    Clear the current measurement and start a new one?
+                </div>
+                <div class='btn-list'>
+                    <button
+                        class='btn btn-sm'
+                        @click='surface.dismissPrompt()'
+                    >
+                        Keep
+                    </button>
+                    <button
+                        class='btn btn-sm btn-primary'
+                        @click='surface.restart()'
+                    >
+                        Clear &amp; Draw
+                    </button>
+                </div>
+            </div>
+
             <MeasureProfile :coordinates='measurement.coordinates' />
 
             <div class='btn-list px-1 pt-2'>
+                <button
+                    class='btn btn-sm'
+                    title='Remove the last point (Backspace)'
+                    :disabled='!undoAvailable'
+                    @click='surface.undo()'
+                >
+                    Undo
+                </button>
                 <button
                     class='btn btn-sm'
                     :disabled='!measurement.coordinates.length'
@@ -135,6 +166,10 @@
             >
                 {{ saveError }}
             </div>
+
+            <div class='subheader px-1 pt-2 text-muted'>
+                Enter finishes · Esc cancels · Backspace removes last point
+            </div>
         </template>
     </div>
 </template>
@@ -150,6 +185,9 @@ const measurement = computed(() => {
     return surface.value?.measurement.value
         ?? { coordinates: [], totalKm: 0, segments: [] };
 });
+
+const undoAvailable = computed(() => surface.value?.undoAvailable.value ?? false);
+const promptNewMeasurement = computed(() => surface.value?.promptNewMeasurement.value ?? false);
 
 const snapOptions = computed(() => {
     const p = pinia.value;

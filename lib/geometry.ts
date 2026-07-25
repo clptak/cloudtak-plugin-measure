@@ -110,3 +110,23 @@ export function nearestWithin(
 export function snapThresholdKm(zoom: number): number {
     return 1000 / Math.pow(2, zoom);
 }
+
+/**
+ * Should a keyboard shortcut be suppressed because the user is typing?
+ *
+ * The ruler binds Backspace at the window level, so without this a Backspace in
+ * the pane's snap-layer picker (or any other field) would delete a map vertex
+ * instead of editing text.
+ *
+ * Takes a loosely-typed target so it can be unit tested without a DOM.
+ */
+export function isTypingTarget(target: unknown): boolean {
+    if (!target || typeof target !== 'object') return false;
+
+    const el = target as { tagName?: unknown; isContentEditable?: unknown };
+
+    if (el.isContentEditable === true) return true;
+    if (typeof el.tagName !== 'string') return false;
+
+    return ['INPUT', 'TEXTAREA', 'SELECT'].includes(el.tagName.toUpperCase());
+}

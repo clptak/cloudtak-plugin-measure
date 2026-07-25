@@ -68,6 +68,36 @@
                         </div>
 
                         <template v-else>
+                            <div
+                                class='mb-2'
+                                role='menu'
+                            >
+                                <span
+                                    class='my-1 px-2 user-select-none'
+                                    :class='{
+                                        "cloudtak-accent rounded-bottom text-blue": elevationUnit === "feet",
+                                        "cursor-pointer": elevationUnit !== "feet",
+                                    }'
+                                    title='Feet'
+                                    role='menuitem'
+                                    tabindex='0'
+                                    @keyup.enter='elevationUnit = "feet"'
+                                    @click='elevationUnit = "feet"'
+                                >Feet</span>
+                                <span
+                                    class='my-1 px-2 user-select-none'
+                                    :class='{
+                                        "cloudtak-accent rounded-bottom text-blue": elevationUnit === "meter",
+                                        "cursor-pointer": elevationUnit !== "meter",
+                                    }'
+                                    title='Meters'
+                                    role='menuitem'
+                                    tabindex='0'
+                                    @keyup.enter='elevationUnit = "meter"'
+                                    @click='elevationUnit = "meter"'
+                                >Meters</span>
+                            </div>
+
                             <div class='row g-2'>
                                 <div class='col-6'>
                                     <div class='profile-stat rounded px-2 py-2'>
@@ -135,7 +165,6 @@ import Chart from 'chart.js/auto';
 import { IconChartLine, IconArrowUp, IconArrowDown } from '@tabler/icons-vue';
 import { TablerBadge, TablerLoading } from '@tak-ps/vue-tabler';
 import SlideDownHeader from '../../../src/components/CloudTAK/util/SlideDownHeader.vue';
-import ProfileConfig from '../../../src/base/profile.ts';
 import { terrainBasemapId, terrainEnabled } from '../lib/core-bridge.ts';
 import { pinia, unit as distanceUnit } from '../lib/state.ts';
 import { loadProfile, profileStats, type ElevationProfile } from '../lib/elevation.ts';
@@ -149,6 +178,10 @@ const CHART_HEIGHT = 220;
 const expanded = ref(false);
 const terrainId = ref<number | undefined>(undefined);
 const terrainOn = ref(false);
+/**
+ * Imperial by default, regardless of the server's `display_elevation` setting.
+ * The Feet/Meters toggle above the stats overrides it per session.
+ */
 const elevationUnit = ref('feet');
 
 const loading = ref(false);
@@ -232,13 +265,6 @@ onMounted(async () => {
     if (p) terrainOn.value = terrainEnabled(p);
 
     terrainId.value = await terrainBasemapId();
-
-    try {
-        const display = await ProfileConfig.get('display_elevation');
-        if (display?.value) elevationUnit.value = String(display.value);
-    } catch {
-        // keep the 'feet' default
-    }
 
     if (expanded.value) await refresh();
 });
