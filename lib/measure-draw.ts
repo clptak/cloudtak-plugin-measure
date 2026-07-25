@@ -22,8 +22,13 @@ import { TerraDrawMapLibreGLAdapter } from 'terra-draw-maplibre-gl-adapter';
 import { TerraDrawRouteSnapMode } from 'terra-draw-route-snap-mode';
 import * as mapgl from 'maplibre-gl';
 import { v4 as randomUUID } from 'uuid';
-import { length } from '@turf/length';
-import { distance } from '@turf/distance';
+import {
+    measure,
+    nearestWithin,
+    snapThresholdKm,
+    EMPTY_MEASUREMENT,
+    type Measurement,
+} from './geometry.ts';
 
 import {
     coreRoutingGraph,
@@ -41,70 +46,7 @@ export const PREFIX = 'measure';
 
 const MEASURE_COLOR = '#1E90FF';
 
-export type Segment = {
-    /** Length of this leg in kilometres */
-    km: number;
-    /** True bearing of this leg, 0-360 */
-    bearing: number;
-};
-
-export type Measurement = {
-    coordinates: Position[];
-    /** Total length in kilometres */
-    totalKm: number;
-    segments: Segment[];
-};
-
-const EMPTY: Measurement = { coordinates: [], totalKm: 0, segments: [] };
-
-/**
- * Initial true bearing from `from` to `to`, 0-360.
- *
- * Implemented inline rather than via `@turf/bearing` because CloudTAK's
- * api/web does not depend on that turf package, and plugins resolve their
- * imports against api/web's node_modules.
- */
-function trueBearing(from: Position, to: Position): number {
-    const toRad = Math.PI / 180;
-    const lon1 = from[0] * toRad;
-    const lat1 = from[1] * toRad;
-    const lon2 = to[0] * toRad;
-    const lat2 = to[1] * toRad;
-
-    const dLon = lon2 - lon1;
-    const y = Math.sin(dLon) * Math.cos(lat2);
-    const x = Math.cos(lat1) * Math.sin(lat2)
-        - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
-
-    return ((Math.atan2(y, x) / toRad) + 360) % 360;
-}
-
-function measure(coordinates: Position[]): Measurement {
-    if (coordinates.length < 2) {
-        return { coordinates, totalKm: 0, segments: [] };
-    }
-
-    const geometry: LineString = { type: 'LineString', coordinates };
-    const feature = { type: 'Feature' as const, properties: {}, geometry };
-
-    const segments: Segment[] = [];
-    for (let i = 1; i < coordinates.length; i++) {
-        const from = coordinates[i - 1];
-        const to = coordinates[i];
-        const leg: LineString = { type: 'LineString', coordinates: [from, to] };
-
-        segments.push({
-            km: length({ type: 'Feature', properties: {}, geometry: leg }),
-            bearing: trueBearing(from, to),
-        });
-    }
-
-    return {
-        coordinates,
-        totalKm: length(feature),
-        segments,
-    };
-}
+export type { Segment, Measurement } from './geometry.ts';
 
 export default class MeasureDraw {
     private pinia: Pinia;
@@ -129,7 +71,7 @@ export default class MeasureDraw {
         this.map = map;
         this.pinia = pinia;
 
-        this.measurement = shallowRef<Measurement>(EMPTY);
+        this.measurement = shallowRef<Measurement>(EMPTY_MEASUREMENT);
         this.active = ref(false);
         this.snapLayer = ref(NO_SNAPPING);
 
@@ -143,18 +85,11 @@ export default class MeasureDraw {
          * works without having to click slightly off it.
          */
         const toCustom = (event: terraDraw.TerraDrawMouseEvent): Position | undefined => {
-            let closest: { dist: number; coord: Position } | undefined;
-
-            for (const coord of this.markerPoints.values()) {
-                const dist = distance([event.lng, event.lat], coord);
-                if (!closest || dist < closest.dist) closest = { dist, coord };
-            }
-
-            if (!closest) return undefined;
-
-            // Base threshold / decayFactor ^ zoomLevel — same as core
-            const threshold = 1000 / Math.pow(2, this.map.getZoom());
-            return closest.dist < threshold ? closest.coord : undefined;
+            return nearestWithin(
+                [event.lng, event.lat],
+                this.markerPoints.values(),
+                snapThresholdKm(this.map.getZoom())
+            );
         };
 
         type ModeList = ConstructorParameters<typeof terraDraw.TerraDraw>[0]['modes'];
@@ -300,7 +235,7 @@ export default class MeasureDraw {
     /** Discard the current measurement but stay active */
     public clear(): void {
         this.draw.clear();
-        this.measurement.value = EMPTY;
+        this.measurement.value = EMPTY_MEASUREMENT;
         if (this.active.value) {
             this.draw.setMode(this.modeForSnapping());
         }
@@ -321,7 +256,7 @@ export default class MeasureDraw {
         } catch (err) {
             console.warn('[measure] error stopping draw surface', err);
         }
-        this.measurement.value = EMPTY;
+        this.measurement.value = EMPTY_MEASUREMENT;
         this.active.value = false;
         this.markerPoints = new Set();
     }

@@ -10,7 +10,7 @@
 import { ref, shallowRef } from 'vue';
 import type { Pinia } from 'pinia';
 import type MeasureDraw from './measure-draw.ts';
-import { isCoreDrawActive, populateSnappingLayers } from './core-bridge.ts';
+import { isCoreDrawActive, populateSnappingLayers, resetSnappingLayer } from './core-bridge.ts';
 import { normalizeDistanceUnit } from './units.ts';
 import type { DistanceUnit } from './units.ts';
 
@@ -47,6 +47,12 @@ export function close(): void {
     const s = surface.value;
     if (s) s.stop();
     active.value = false;
+
+    // Hand core's snapping state back untouched, so we don't leave Drawing
+    // Tools pre-armed with a layer the user never picked — and so nothing keeps
+    // tile-covering the viewport on pan.
+    const p = pinia.value;
+    if (p) void resetSnappingLayer(p);
 }
 
 export function toggle(): void {

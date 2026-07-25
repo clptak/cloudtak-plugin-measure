@@ -5,5 +5,12 @@
     "type": "module",
     "main": "index.ts",
     "license": "ISC",
-    "comment": "Dependencies are intentionally empty. This plugin is bundled by Vite from ~/CloudTAK/api/web and resolves all imports (terra-draw, turf, vue, maplibre-gl) against that project's node_modules via the symlinked-plugin-resolve plugin in api/web/vite.config.js. Do not npm install here."
+    "scripts": {
+        "test": "vitest run",
+        "test:watch": "vitest"
+    },
+    "devDependencies": {
+        "vitest": "^3.2.4"
+    },
+    "comment": "Runtime dependencies are intentionally absent. This plugin is bundled by Vite from ~/CloudTAK/api/web and resolves terra-draw, vue, maplibre-gl and CloudTAK core against that project's node_modules via the symlinked-plugin-resolve plugin in api/web/vite.config.js. The only local devDependency is vitest, which covers the dependency-free modules in lib/ (geometry.ts, units.ts, profile-stats.ts) — see docs/TESTING.md."
 }

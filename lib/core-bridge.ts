@@ -153,6 +153,52 @@ export function snappingLayer(pinia: Pinia): string {
 }
 
 /**
+ * Hard ceiling on the zoom used to tile-cover the viewport for the routing
+ * graph. See `issue-snapping-runaway-requests.md`: a snapping basemap with an
+ * unset `maxzoom` is defaulted to 22 by core (`draw.ts:521`), and
+ * `updateGraph()` then tile-covers the whole viewport at that zoom — millions
+ * of tiles, each a 404 that is never negatively cached and so re-requested on
+ * every `moveend`.
+ */
+const MAX_GRAPH_ZOOM = 16;
+
+/** How far above the current map zoom we are willing to tile-cover */
+const GRAPH_ZOOM_HEADROOM = 4;
+
+/**
+ * Clamp `route.zoom` so a misconfigured basemap can't flood the tiles service.
+ *
+ * Chosen so a correctly-configured layer is unaffected: at map z11 with a
+ * truthful `maxzoom: 14`, the clamp is `min(14, 15, 16) = 14` — identical to
+ * core. With a bogus `maxzoom: 22` it becomes 15 instead of 22.
+ */
+function clampGraphZoom(pinia: Pinia): void {
+    const draw = drawTool(pinia);
+    if (!draw?.route || typeof draw.route.zoom !== 'number') return;
+
+    try {
+        const mapStore = useMapStore(pinia);
+        const mapZoom = mapStore.map.getZoom();
+
+        const clamped = Math.min(
+            draw.route.zoom,
+            Math.ceil(mapZoom) + GRAPH_ZOOM_HEADROOM,
+            MAX_GRAPH_ZOOM
+        );
+
+        if (clamped < draw.route.zoom) {
+            console.warn(
+                `[measure] clamping snapping graph zoom ${draw.route.zoom} -> ${clamped} `
+                + '(see issue-snapping-runaway-requests.md)'
+            );
+            draw.route.zoom = clamped;
+        }
+    } catch {
+        // If we can't read the map zoom, leave core's value alone
+    }
+}
+
+/**
  * Select a snapping layer and force core to (re)build the routing graph for the
  * current viewport. Resolves false when snapping is unavailable.
  */
@@ -170,6 +216,9 @@ export async function selectSnappingLayer(pinia: Pinia, layer: string): Promise<
         }
 
         if (layer !== NO_SNAPPING && typeof draw.updateGraph === 'function') {
+            // The setter above assigns route.zoom = def.maxzoom; clamp before
+            // any tile-cover happens.
+            clampGraphZoom(pinia);
             await draw.updateGraph();
         }
 
@@ -177,6 +226,31 @@ export async function selectSnappingLayer(pinia: Pinia, layer: string): Promise<
     } catch (err) {
         console.warn('[measure] failed to select snapping layer', err);
         return false;
+    }
+}
+
+/**
+ * Put core's snapping state back the way we found it.
+ *
+ * The ruler drives `draw.snappingLayer`, which is the same field core's
+ * DrawOverlay dropdown binds to (`DrawOverlay.vue:153/206`). Without this,
+ * closing the ruler leaves core pre-set to our layer, so the next time the user
+ * opens Drawing Tools in LineString mode core immediately flips into snapping
+ * mode with a layer they never chose.
+ */
+export async function resetSnappingLayer(pinia: Pinia): Promise<void> {
+    const draw = drawTool(pinia);
+    if (!draw) return;
+    if (snappingLayer(pinia) === NO_SNAPPING) return;
+
+    try {
+        if (typeof draw.snappingLayer === 'string') {
+            draw.snappingLayer = NO_SNAPPING;
+        } else if (draw.route) {
+            draw.route.layer = NO_SNAPPING;
+        }
+    } catch (err) {
+        console.warn('[measure] failed to reset snapping layer', err);
     }
 }
 
@@ -283,6 +357,10 @@ export async function expandGraphForViewport(pinia: Pinia): Promise<void> {
     const draw = drawTool(pinia);
     if (!draw || typeof draw.updateGraph !== 'function') return;
     try {
+        // Re-clamp on every pan: zooming out raises the headroom ceiling, and
+        // failed tiles are never cached by core, so an unclamped zoom re-floods
+        // on each moveend.
+        clampGraphZoom(pinia);
         await draw.updateGraph({ expand: true });
     } catch (err) {
         console.warn('[measure] failed to expand routing graph', err);
