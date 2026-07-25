@@ -83,6 +83,48 @@
                 >
                     Clear
                 </button>
+                <button
+                    class='btn btn-sm'
+                    :disabled='measurement.coordinates.length < 2 || saving'
+                    @click='confirmingSave = true'
+                >
+                    Save as Line
+                </button>
+            </div>
+
+            <div
+                v-if='confirmingSave'
+                class='cloudtak-accent rounded mx-1 mt-2 px-2 py-2'
+            >
+                <div class='mb-2'>
+                    Save this measurement as a CoT line named
+                    <span class='fw-bold'>{{ defaultCallsign }}</span>?
+                </div>
+                <div class='text-warning mb-2'>
+                    If a Data Sync is active, this line will be shared to it.
+                </div>
+                <div class='btn-list'>
+                    <button
+                        class='btn btn-sm'
+                        @click='confirmingSave = false'
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        class='btn btn-sm btn-primary'
+                        :disabled='saving'
+                        @click='save'
+                    >
+                        Save
+                    </button>
+                </div>
+            </div>
+
+            <div
+                v-if='saveError'
+                class='text-danger px-1 pt-2'
+            >
+                {{ saveError }}
             </div>
         </template>
     </div>
@@ -91,7 +133,7 @@
 <script setup lang='ts'>
 import { computed, ref, watch } from 'vue';
 import { surface, unit, pinia } from '../lib/state.ts';
-import { snappingOptions, selectSnappingLayer, NO_SNAPPING } from '../lib/core-bridge.ts';
+import { snappingOptions, selectSnappingLayer, saveLine, NO_SNAPPING } from '../lib/core-bridge.ts';
 import { DISTANCE_UNITS, formatDistance, formatBearing } from '../lib/units.ts';
 
 const measurement = computed(() => {
@@ -105,6 +147,39 @@ const snapOptions = computed(() => {
 });
 
 const snapLayer = ref(NO_SNAPPING);
+
+const confirmingSave = ref(false);
+const saving = ref(false);
+const saveError = ref<string | null>(null);
+
+const defaultCallsign = computed(() => {
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2, '0');
+    const mm = String(now.getMinutes()).padStart(2, '0');
+    return `Measurement ${hh}:${mm}`;
+});
+
+async function save(): Promise<void> {
+    const p = pinia.value;
+    if (!p) return;
+
+    saving.value = true;
+    saveError.value = null;
+
+    const id = await saveLine(p, measurement.value.coordinates, defaultCallsign.value);
+
+    saving.value = false;
+    confirmingSave.value = false;
+
+    if (!id) {
+        saveError.value = 'Could not save the measurement as a line.';
+        return;
+    }
+
+    // The measurement is now a real feature; drop the ephemeral overlay so the
+    // user isn't looking at the same line twice.
+    surface.value?.clear();
+}
 
 watch(snapLayer, async (layer) => {
     const p = pinia.value;

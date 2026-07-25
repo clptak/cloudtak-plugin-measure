@@ -1,14 +1,22 @@
 <template>
     <!--
         Registered through api.bottomBar.add(), but renders nothing inline.
-        The button is teleported to <body> and positioned under the top map
-        controls bar (Map.vue:267-316), which has no plugin hook of its own.
+        The button is teleported to <body> and anchored directly beneath the
+        left-margin map controls stack (Map.vue:120), which has no plugin hook
+        of its own.
 
-        Offsets derive from --map-compact-menu-size rather than being hardcoded,
-        so an upstream chrome restyle is less likely to strand the button.
+        Anchoring to that element rather than using fixed offsets does two jobs:
+        the button tracks the stack as it grows/shrinks (the pitch and zoom
+        buttons come and go), and because core only renders the stack when
+        `mode === "Default"` (Map.vue:116), the button automatically disappears
+        on the main menu and every other view instead of floating over them.
     -->
     <Teleport to='body'>
-        <div class='measure-toggle-shell cloudtak-ctrl-group cloudtak-panel'>
+        <div
+            v-if='anchor'
+            class='measure-toggle-shell cloudtak-ctrl-group cloudtak-panel'
+            :style='{ top: `${anchor.top}px`, left: `${anchor.left}px` }'
+        >
             <div
                 role='button'
                 tabindex='0'
@@ -28,9 +36,76 @@
 </template>
 
 <script setup lang='ts'>
-import { watch } from 'vue';
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { IconRulerMeasure } from '@tabler/icons-vue';
 import { active, toggle, close, coreDrawActive } from '../lib/state.ts';
+
+/** Gap between the core control stack and our button */
+const GAP = 8;
+
+const anchor = ref<{ top: number; left: number } | null>(null);
+
+let resizeObserver: ResizeObserver | null = null;
+let mutationObserver: MutationObserver | null = null;
+let observed: Element | null = null;
+
+/** The core left-margin control stack — never our own teleported element */
+function coreControlStack(): HTMLElement | null {
+    return document.querySelector<HTMLElement>(
+        '.cloudtak-ctrl-group:not(.measure-toggle-shell)'
+    );
+}
+
+function reposition(): void {
+    const el = coreControlStack();
+
+    if (!el) {
+        // Core hid the map controls (menu open, non-Default mode) — hide too
+        anchor.value = null;
+        return;
+    }
+
+    if (el !== observed) {
+        if (resizeObserver && observed) resizeObserver.unobserve(observed);
+        observed = el;
+        if (resizeObserver) resizeObserver.observe(el);
+    }
+
+    const rect = el.getBoundingClientRect();
+    anchor.value = { top: rect.bottom + GAP, left: rect.left };
+}
+
+onMounted(() => {
+    reposition();
+
+    // The stack resizes as the compass/pitch/zoom buttons appear and disappear
+    resizeObserver = new ResizeObserver(() => reposition());
+
+    // ...and is added/removed wholesale when the view mode changes
+    mutationObserver = new MutationObserver(() => reposition());
+    mutationObserver.observe(document.body, { childList: true, subtree: true });
+
+    window.addEventListener('resize', reposition);
+});
+
+onBeforeUnmount(() => {
+    if (resizeObserver) {
+        resizeObserver.disconnect();
+        resizeObserver = null;
+    }
+    if (mutationObserver) {
+        mutationObserver.disconnect();
+        mutationObserver = null;
+    }
+    observed = null;
+    window.removeEventListener('resize', reposition);
+});
+
+// If core hides the map controls while a measurement is open, close the ruler
+// so we never leave an invisible tool capturing map clicks.
+watch(anchor, (value) => {
+    if (!value && active.value) close();
+});
 
 /**
  * Mutual exclusion. Core's DrawTool.mode is a `ref` behind a getter
@@ -45,10 +120,7 @@ watch(coreDrawActive, (isCoreActive) => {
 <style scoped>
 .measure-toggle-shell {
     position: fixed;
-    /* The top controls bar is 60px tall (Map.vue:272); sit just under it */
-    top: 68px;
-    right: calc(var(--map-compact-menu-size, 60px) + 10px);
-    /* Matches the z-index of the controls bar itself (Map.vue:271) */
-    z-index: 5;
+    /* Above the map, below core's top control bar (z-index 5, Map.vue:271) */
+    z-index: 4;
 }
 </style>

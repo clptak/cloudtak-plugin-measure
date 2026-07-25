@@ -23,10 +23,12 @@ import { TerraDrawRouteSnapMode } from 'terra-draw-route-snap-mode';
 import * as mapgl from 'maplibre-gl';
 import { v4 as randomUUID } from 'uuid';
 import { length } from '@turf/length';
+import { distance } from '@turf/distance';
 
 import {
     coreRoutingGraph,
     expandGraphForViewport,
+    snapPoints,
     NO_SNAPPING,
 } from './core-bridge.ts';
 
@@ -111,6 +113,10 @@ export default class MeasureDraw {
     private onMoveEnd: () => void;
     /** terra-draw exposes no getModeNames(), so track what we registered */
     private hasRouteSnap: boolean;
+    /** Coordinates of nearby CoT features, for snapping a vertex onto a marker */
+    private markerPoints: Set<[number, number]>;
+    /** Swallows canvas clicks so core never opens a radial menu while measuring */
+    private swallowClick: (ev: MouseEvent) => void;
 
     /** Live measurement, updated on every vertex change */
     public readonly measurement: ShallowRef<Measurement>;
@@ -127,11 +133,36 @@ export default class MeasureDraw {
         this.active = ref(false);
         this.snapLayer = ref(NO_SNAPPING);
 
+        this.markerPoints = new Set();
+
+        /**
+         * Snap a vertex onto a nearby CoT marker.
+         *
+         * Mirrors core's `toCustom` (draw.ts:186-212) including its
+         * zoom-scaled threshold, so ending a measurement exactly on a marker
+         * works without having to click slightly off it.
+         */
+        const toCustom = (event: terraDraw.TerraDrawMouseEvent): Position | undefined => {
+            let closest: { dist: number; coord: Position } | undefined;
+
+            for (const coord of this.markerPoints.values()) {
+                const dist = distance([event.lng, event.lat], coord);
+                if (!closest || dist < closest.dist) closest = { dist, coord };
+            }
+
+            if (!closest) return undefined;
+
+            // Base threshold / decayFactor ^ zoomLevel — same as core
+            const threshold = 1000 / Math.pow(2, this.map.getZoom());
+            return closest.dist < threshold ? closest.coord : undefined;
+        };
+
         type ModeList = ConstructorParameters<typeof terraDraw.TerraDraw>[0]['modes'];
 
         const modes: ModeList = [
             new terraDraw.TerraDrawLineStringMode({
                 editable: true,
+                snapping: { toCustom },
                 styles: {
                     lineStringColor: () => MEASURE_COLOR,
                     lineStringWidth: () => 3,
@@ -184,13 +215,42 @@ export default class MeasureDraw {
             this.recompute();
         });
 
-        // Mirrors core's graph expansion on pan (draw.ts:131)
         this.onMoveEnd = () => {
             if (!this.active.value) return;
+            void this.refreshMarkerPoints();
+            // Mirrors core's graph expansion on pan (draw.ts:131)
             if (this.snapLayer.value === NO_SNAPPING) return;
             void expandGraphForViewport(this.pinia);
         };
         this.map.on('moveend', this.onMoveEnd);
+
+        /**
+         * While measuring, stop map clicks from reaching CloudTAK core.
+         *
+         * Core's click handler (map.ts:1135) bails out only when its OWN draw
+         * mode is non-STATIC. The ruler leaves core in STATIC, so without this
+         * a click on a marker opens the radial menu instead of placing a vertex.
+         *
+         * MapLibre binds `click` on `map.getCanvasContainer()` (bubble phase);
+         * terra-draw binds on the child `map.getCanvas()`. A bubble-phase
+         * listener on the canvas therefore runs alongside terra-draw's own
+         * handlers but stops the event before it reaches MapLibre's container
+         * listener. `stopPropagation` (not `stopImmediatePropagation`) is
+         * deliberate — sibling listeners on the canvas must still fire.
+         */
+        this.swallowClick = (ev: MouseEvent) => {
+            if (!this.active.value) return;
+            ev.stopPropagation();
+        };
+    }
+
+    private async refreshMarkerPoints(): Promise<void> {
+        try {
+            const bounds = this.map.getBounds().toArray() as [number, number][];
+            this.markerPoints = await snapPoints(this.pinia, bounds);
+        } catch (err) {
+            console.warn('[measure] failed to refresh marker snap points', err);
+        }
     }
 
     /** The in-progress or finished measurement geometry, if any */
@@ -223,9 +283,11 @@ export default class MeasureDraw {
     /** Begin a measurement session */
     public start(): void {
         if (this.active.value) return;
+        this.map.getCanvas().addEventListener('click', this.swallowClick);
         this.draw.start();
         this.draw.setMode(this.modeForSnapping());
         this.active.value = true;
+        void this.refreshMarkerPoints();
     }
 
     /** Change snapping layer mid-session */
@@ -248,6 +310,11 @@ export default class MeasureDraw {
     public stop(): void {
         if (!this.active.value) return;
         try {
+            this.map.getCanvas().removeEventListener('click', this.swallowClick);
+        } catch {
+            // canvas may already be gone
+        }
+        try {
             this.draw.setMode(STATIC_MODE);
             this.draw.clear();
             this.draw.stop();
@@ -256,6 +323,7 @@ export default class MeasureDraw {
         }
         this.measurement.value = EMPTY;
         this.active.value = false;
+        this.markerPoints = new Set();
     }
 
     /** Full teardown — called from the plugin's disable() */

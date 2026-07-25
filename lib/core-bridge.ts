@@ -9,6 +9,8 @@
  */
 
 import type { Pinia } from 'pinia';
+import type { Position } from 'geojson';
+import { v4 as uuid } from 'uuid';
 import { useMapStore } from '../../../src/stores/map.ts';
 
 /** Mirrors DrawToolMode.STATIC in api/web/src/stores/modules/draw.ts:36 */
@@ -123,6 +125,101 @@ export async function selectSnappingLayer(pinia: Pinia, layer: string): Promise<
     } catch (err) {
         console.warn('[measure] failed to select snapping layer', err);
         return false;
+    }
+}
+
+/**
+ * Coordinates of CoT features in the current viewport, for snapping a
+ * measurement vertex onto an existing marker.
+ *
+ * Core keeps an equivalent set on `DrawTool.snapping`, but only while core's
+ * own draw mode is non-STATIC — it clears the set otherwise (map.ts:1127-1131).
+ * The ruler leaves core in STATIC, so we query the worker DB ourselves.
+ */
+export async function snapPoints(
+    pinia: Pinia,
+    bounds: [number, number][]
+): Promise<Set<[number, number]>> {
+    try {
+        const mapStore = useMapStore(pinia);
+        const worker = (mapStore as unknown as {
+            worker?: {
+                db?: {
+                    snapping?: (bbox: [number, number][]) => Promise<Set<[number, number]>>;
+                };
+            };
+        }).worker;
+
+        if (typeof worker?.db?.snapping === 'function') {
+            return await worker.db.snapping(bounds);
+        }
+    } catch (err) {
+        console.warn('[measure] failed to load snap points', err);
+    }
+    return new Set();
+}
+
+/**
+ * Persist a measurement as a real CoT LineString — the only path by which this
+ * plugin ever writes to the database. Mirrors the feature shape core builds in
+ * draw.ts:399-425 and the same `worker.db.add(feat, { authored: true })` call.
+ *
+ * Returns the new feature id, or undefined if the write wasn't possible.
+ */
+export async function saveLine(
+    pinia: Pinia,
+    coordinates: Position[],
+    callsign: string
+): Promise<string | undefined> {
+    if (coordinates.length < 2) return undefined;
+
+    try {
+        const mapStore = useMapStore(pinia);
+        const store = mapStore as unknown as {
+            worker?: {
+                db?: {
+                    add?: (
+                        feat: Record<string, unknown>,
+                        opts: { authored: boolean }
+                    ) => Promise<unknown>;
+                };
+            };
+            refresh?: () => Promise<void>;
+        };
+
+        if (typeof store.worker?.db?.add !== 'function') return undefined;
+
+        const id = uuid();
+        const now = new Date();
+
+        await store.worker.db.add({
+            id,
+            type: 'Feature',
+            path: '/',
+            properties: {
+                id,
+                // u-d-f is what core uses for LINESTRING/SNAPPING (draw.ts:423)
+                type: 'u-d-f',
+                how: 'h-g-i-g-o',
+                archived: true,
+                callsign,
+                time: now.toISOString(),
+                start: now.toISOString(),
+                stale: new Date(now.getTime() + 3600).toISOString(),
+                center: [0, 0],
+            },
+            geometry: {
+                type: 'LineString',
+                coordinates: JSON.parse(JSON.stringify(coordinates)),
+            },
+        }, { authored: true });
+
+        if (typeof store.refresh === 'function') await store.refresh();
+
+        return id;
+    } catch (err) {
+        console.error('[measure] failed to save measurement as a line', err);
+        return undefined;
     }
 }
 
