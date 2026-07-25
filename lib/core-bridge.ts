@@ -12,6 +12,7 @@ import type { Pinia } from 'pinia';
 import type { Position } from 'geojson';
 import { v4 as uuid } from 'uuid';
 import { useMapStore } from '../../../src/stores/map.ts';
+import Config from '../../../src/base/config.ts';
 
 /** Mirrors DrawToolMode.STATIC in api/web/src/stores/modules/draw.ts:36 */
 export const CORE_STATIC_MODE = 'static';
@@ -29,8 +30,36 @@ type CoreDrawTool = {
     snappingOptions?: string[];
     snappingLayer?: string;
     updateGraph?: (opts?: { expand?: boolean }) => Promise<void>;
+    populateSnappingLayers?: () => Promise<void>;
     finish?: () => Promise<void>;
 };
+
+/**
+ * Id of the raster-dem basemap configured as terrain, or undefined when 3D
+ * terrain isn't configured. Mirrors `stores/map.ts:479-482`.
+ */
+export async function terrainBasemapId(): Promise<number | undefined> {
+    try {
+        const cfg = await Config.list(['map::terrain'], {
+            defaults: { 'map::terrain': null }
+        });
+        const value = cfg['map::terrain'];
+        return value ? Number(value) : undefined;
+    } catch (err) {
+        console.warn('[measure] failed to read terrain basemap config', err);
+        return undefined;
+    }
+}
+
+/** Is 3D terrain currently enabled on the map? (`stores/map.ts:131`) */
+export function terrainEnabled(pinia: Pinia): boolean {
+    try {
+        const mapStore = useMapStore(pinia);
+        return !!(mapStore as unknown as { terrainEnabled?: boolean }).terrainEnabled;
+    } catch {
+        return false;
+    }
+}
 
 function drawTool(pinia: Pinia): CoreDrawTool | undefined {
     try {
@@ -84,6 +113,29 @@ export function coreRoutingGraph(pinia: Pinia): unknown | undefined {
     const graph = draw?.route?.graph;
     if (!graph || typeof graph !== 'object') return undefined;
     return graph;
+}
+
+/**
+ * Ask core to discover which basemaps are snapping-capable.
+ *
+ * This populates BOTH `draw.snappingOptions` (the picker list) and
+ * `draw.route.definitions` (the name → tile-URL map that `updateGraph()` needs
+ * at draw.ts:568). Without it, `updateGraph()` throws 'No definition found for
+ * layer' inside a per-tile promise, which core swallows into `console.error` —
+ * so snapping silently does nothing.
+ *
+ * Core only ever calls this from `DrawOverlay.vue:416/422`, i.e. when its own
+ * Drawing Tools overlay opens. The ruler never opens that overlay, so it must
+ * call it itself.
+ */
+export async function populateSnappingLayers(pinia: Pinia): Promise<void> {
+    const draw = drawTool(pinia);
+    if (!draw || typeof draw.populateSnappingLayers !== 'function') return;
+    try {
+        await draw.populateSnappingLayers();
+    } catch (err) {
+        console.warn('[measure] failed to populate snapping layers', err);
+    }
 }
 
 /** Snapping layer names core has discovered, including the 'No Snapping' sentinel. */

@@ -75,6 +75,8 @@
                 </table>
             </div>
 
+            <MeasureProfile :coordinates='measurement.coordinates' />
+
             <div class='btn-list px-1 pt-2'>
                 <button
                     class='btn btn-sm'
@@ -142,6 +144,7 @@ import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { surface, unit, pinia, close } from '../lib/state.ts';
 import { snappingOptions, selectSnappingLayer, saveLine, NO_SNAPPING } from '../lib/core-bridge.ts';
 import { DISTANCE_UNITS, formatDistance, formatBearing } from '../lib/units.ts';
+import MeasureProfile from './MeasureProfile.vue';
 
 const measurement = computed(() => {
     return surface.value?.measurement.value

@@ -10,7 +10,7 @@
 import { ref, shallowRef } from 'vue';
 import type { Pinia } from 'pinia';
 import type MeasureDraw from './measure-draw.ts';
-import { isCoreDrawActive } from './core-bridge.ts';
+import { isCoreDrawActive, populateSnappingLayers } from './core-bridge.ts';
 import { normalizeDistanceUnit } from './units.ts';
 import type { DistanceUnit } from './units.ts';
 
@@ -35,6 +35,12 @@ export function open(): void {
     if (!s) return;
     s.start();
     active.value = true;
+
+    // Core only discovers snapping-capable basemaps when its own Drawing Tools
+    // overlay opens (DrawOverlay.vue:416). The ruler must trigger it, or the
+    // snap layer picker stays empty and updateGraph() has no tile definitions.
+    const p = pinia.value;
+    if (p) void populateSnappingLayers(p);
 }
 
 export function close(): void {

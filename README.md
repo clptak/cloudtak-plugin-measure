@@ -65,13 +65,19 @@ cp -r ~/dev/cloudtak-plugin-measure ~/CloudTAK/api/web/plugins/_measurecheck
 rm -rf ~/CloudTAK/api/web/plugins/_measurecheck
 ```
 
-## Runtime checklist (not yet done)
+## Runtime checklist
 
-1. Ruler button appears under the top map-controls bar, left of the compact menu.
-2. Clicking it opens the Measure pane and lets you place vertices.
-3. Total distance, per-segment length and bearing update live.
-4. Opening core Drawing Tools closes the ruler; opening the ruler cancels a core draw.
-5. Selecting a snap layer routes the line along the network.
-6. **`db.feature` count is unchanged after measuring, and no CoT reaches the Active Data Sync.**
-7. `measure-point` / `measure-linestring` / `measure-polygon` sources exist while active and are
-   gone after closing; core's `td-*` layers are untouched.
+Confirmed working locally:
+
+1. ✅ Ruler button appears, anchored under the left-margin map controls stack.
+2. ✅ Clicking it opens the Measure pane and lets you place vertices.
+3. ✅ Total distance, per-segment length and bearing update live.
+4. ✅ Opening core Drawing Tools closes the ruler; opening the ruler cancels a core draw.
+5. ✅ `db.feature` count unchanged after measuring — no CoT, nothing to Data Sync.
+6. ✅ `measure-*` sources exist while active and are gone after closing; core's `td-*` untouched.
+
+Still to verify (needs a server with snapping basemaps + a terrain basemap):
+
+7. ⬜ Snap layer picker lists the snapping basemaps, and selecting one routes along the network.
+8. ⬜ Terrain profile renders when 3D terrain is enabled.
+9. ⬜ Save as Line creates the CoT and exits measure mode.
