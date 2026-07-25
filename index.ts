@@ -64,8 +64,8 @@ export default class MeasurePlugin implements PluginInstance {
                     uid: FLOAT_UID,
                     name: 'Measure',
                     component: MeasurePane,
-                    width: 340,
-                    height: 420,
+                    width: 420,
+                    height: 560,
                 });
             } else if (this.api.float.has(FLOAT_UID)) {
                 this.api.float.remove(FLOAT_UID);

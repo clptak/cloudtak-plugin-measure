@@ -1,121 +1,152 @@
 <template>
-    <div class='px-1 pt-2'>
-        <label class='subheader'>Terrain Profile</label>
-
-        <div
-            v-if='!terrainId'
-            class='text-muted px-1 py-1'
+    <div class='col-12'>
+        <SlideDownHeader
+            v-model='expanded'
+            label='Terrain Profile'
         >
-            No terrain basemap is configured (<code>map::terrain</code>).
-        </div>
-
-        <div
-            v-else-if='!terrainOn'
-            class='text-muted px-1 py-1'
-        >
-            Enable 3D terrain to see a profile.
-        </div>
-
-        <div
-            v-else-if='coordinates.length < 2'
-            class='text-muted px-1 py-1'
-        >
-            Place at least two points.
-        </div>
-
-        <template v-else>
-            <div
-                v-if='loading'
-                class='text-muted px-1 py-1'
-            >
-                Loading terrain profile…
-            </div>
-
-            <div
-                v-else-if='error'
-                class='text-danger px-1 py-1'
-            >
-                {{ error }}
-            </div>
-
-            <div
-                v-else-if='!stats'
-                class='text-muted px-1 py-1'
-            >
-                No terrain samples are available for this line.
-            </div>
-
-            <template v-else>
-                <div class='row g-1 mb-2'>
-                    <div class='col-6'>
-                        <div class='subheader'>
-                            Gain
-                        </div>
-                        <div class='fw-semibold'>
-                            <IconArrowUp
-                                :size='14'
-                                stroke='2'
-                            />
-                            {{ formatElevation(stats.gain, elevationUnit) }}
-                        </div>
-                    </div>
-                    <div class='col-6'>
-                        <div class='subheader'>
-                            Loss
-                        </div>
-                        <div class='fw-semibold'>
-                            <IconArrowDown
-                                :size='14'
-                                stroke='2'
-                            />
-                            {{ formatElevation(stats.loss, elevationUnit) }}
-                        </div>
-                    </div>
-                    <div class='col-6'>
-                        <div class='subheader'>
-                            Min
-                        </div>
-                        <div class='fw-semibold'>
-                            {{ formatElevation(stats.minElevation, elevationUnit) }}
-                        </div>
-                    </div>
-                    <div class='col-6'>
-                        <div class='subheader'>
-                            Max
-                        </div>
-                        <div class='fw-semibold'>
-                            {{ formatElevation(stats.maxElevation, elevationUnit) }}
-                        </div>
-                    </div>
-                </div>
-
-                <div style='height: 140px;'>
-                    <canvas ref='canvasRef' />
-                </div>
+            <template #icon>
+                <IconChartLine
+                    :size='18'
+                    stroke='1'
+                    color='#6b7990'
+                    class='ms-2 me-1'
+                />
             </template>
-        </template>
+            <template #right>
+                <TablerBadge
+                    v-if='profile'
+                    class='me-2'
+                    background-color='rgba(59, 130, 246, 0.15)'
+                    border-color='rgba(59, 130, 246, 0.4)'
+                    text-color='#3b82f6'
+                >
+                    Generated
+                </TablerBadge>
+            </template>
+
+            <div class='overflow-hidden mb-2'>
+                <div class='cloudtak-accent rounded mx-2 mt-2 px-2 py-2'>
+                    <div
+                        v-if='!terrainId'
+                        class='px-1 py-1 text-muted'
+                    >
+                        No terrain basemap is configured (<code>map::terrain</code>).
+                    </div>
+
+                    <div
+                        v-else-if='!terrainOn'
+                        class='px-1 py-1 text-muted'
+                    >
+                        Enable 3D terrain to see a profile.
+                    </div>
+
+                    <div
+                        v-else-if='coordinates.length < 2'
+                        class='px-1 py-1 text-muted'
+                    >
+                        Place at least two points.
+                    </div>
+
+                    <template v-else>
+                        <TablerLoading
+                            v-if='loading'
+                            desc='Loading terrain profile'
+                        />
+
+                        <div
+                            v-else-if='error'
+                            class='px-1 py-1 text-danger'
+                        >
+                            {{ error }}
+                        </div>
+
+                        <div
+                            v-else-if='!stats'
+                            class='px-1 py-1 text-muted'
+                        >
+                            No terrain samples are available for this line.
+                        </div>
+
+                        <template v-else>
+                            <div class='row g-2'>
+                                <div class='col-6'>
+                                    <div class='profile-stat rounded px-2 py-2'>
+                                        <div class='subheader'>
+                                            Distance
+                                        </div>
+                                        <div class='fw-semibold'>
+                                            {{ displayDistance(stats.distanceKm) }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class='col-6'>
+                                    <div class='profile-stat rounded px-2 py-2'>
+                                        <div class='subheader'>
+                                            Min / Max
+                                        </div>
+                                        <div class='fw-semibold'>
+                                            {{ displayElevation(stats.minElevation) }} / {{ displayElevation(stats.maxElevation) }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class='col-6'>
+                                    <div class='profile-stat rounded px-2 py-2'>
+                                        <div class='subheader'>
+                                            Gain
+                                        </div>
+                                        <div class='fw-semibold text-success d-flex align-items-center gap-1'>
+                                            <IconArrowUp :size='16' />
+                                            {{ displayElevation(stats.gain) }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class='col-6'>
+                                    <div class='profile-stat rounded px-2 py-2'>
+                                        <div class='subheader'>
+                                            Loss
+                                        </div>
+                                        <div class='fw-semibold text-danger d-flex align-items-center gap-1'>
+                                            <IconArrowDown :size='16' />
+                                            {{ displayElevation(stats.loss) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div
+                                ref='shellRef'
+                                class='profile-chart-shell mt-2'
+                            >
+                                <canvas ref='canvasRef' />
+                            </div>
+                        </template>
+                    </template>
+                </div>
+            </div>
+        </SlideDownHeader>
     </div>
 </template>
 
 <script setup lang='ts'>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import type { LineString, Position } from 'geojson';
+import type { ChartData, ChartOptions, TooltipItem } from 'chart.js';
 import Chart from 'chart.js/auto';
-import { IconArrowUp, IconArrowDown } from '@tabler/icons-vue';
+import { IconChartLine, IconArrowUp, IconArrowDown } from '@tabler/icons-vue';
+import { TablerBadge, TablerLoading } from '@tak-ps/vue-tabler';
+import SlideDownHeader from '../../../src/components/CloudTAK/util/SlideDownHeader.vue';
 import ProfileConfig from '../../../src/base/profile.ts';
 import { terrainBasemapId, terrainEnabled } from '../lib/core-bridge.ts';
-import { pinia } from '../lib/state.ts';
-import {
-    loadProfile,
-    profileStats,
-    formatElevation,
-    type ElevationProfile,
-} from '../lib/elevation.ts';
+import { pinia, unit as distanceUnit } from '../lib/state.ts';
+import { loadProfile, profileStats, type ElevationProfile } from '../lib/elevation.ts';
 
 const props = defineProps<{
     coordinates: Position[];
 }>();
 
+const CHART_HEIGHT = 220;
+
+const expanded = ref(false);
 const terrainId = ref<number | undefined>(undefined);
 const terrainOn = ref(false);
 const elevationUnit = ref('feet');
@@ -124,13 +155,77 @@ const loading = ref(false);
 const error = ref<string | null>(null);
 const profile = ref<ElevationProfile | null>(null);
 const canvasRef = ref<HTMLCanvasElement | null>(null);
+const shellRef = ref<HTMLDivElement | null>(null);
+const loadedSignature = ref<string | null>(null);
 
 let chart: Chart<'line'> | null = null;
+let resizeObserver: ResizeObserver | null = null;
 
 const stats = computed(() => profileStats(profile.value));
 
-/** Recompute only when the geometry actually changes, not on every render */
+const samples = computed(() => {
+    return (profile.value?.samples || []).filter(
+        (s): s is { distance: number; elevation: number } => s.elevation !== null
+    );
+});
+
 const geometryKey = computed(() => JSON.stringify(props.coordinates));
+
+/* -- unit helpers, mirroring core's PropertyProfile.vue -------------------- */
+
+function convertDistance(kilometers: number): number {
+    switch (distanceUnit.value) {
+        case 'meter': return kilometers * 1000;
+        case 'feet': return kilometers * 3280.84;
+        case 'yard': return kilometers * 1093.61;
+        case 'kilometer': return kilometers;
+        case 'mile': return kilometers * 0.621371;
+        default: return kilometers;
+    }
+}
+
+function distanceUnitLabel(): string {
+    switch (distanceUnit.value) {
+        case 'meter': return 'm';
+        case 'feet': return 'ft';
+        case 'yard': return 'yd';
+        case 'kilometer': return 'km';
+        case 'mile': return 'mi';
+        default: return distanceUnit.value;
+    }
+}
+
+function convertElevation(meters: number): number {
+    return elevationUnit.value === 'meter' ? meters : meters * 3.28084;
+}
+
+function elevationUnitLabel(): string {
+    return elevationUnit.value === 'meter' ? 'm' : 'ft';
+}
+
+function formatNumber(value: number): string {
+    if (!Number.isFinite(value)) return '0';
+    return value >= 100 ? Math.round(value).toLocaleString() : value.toFixed(1);
+}
+
+function formatAxisValue(value: number): string {
+    if (!Number.isFinite(value)) return '';
+    return value >= 100 ? Math.round(value).toString() : value.toFixed(1);
+}
+
+function displayDistance(kilometers: number): string {
+    return `${formatNumber(convertDistance(kilometers))} ${distanceUnitLabel()}`;
+}
+
+function displayDistanceRaw(value: number): string {
+    return `${formatNumber(value)} ${distanceUnitLabel()}`;
+}
+
+function displayElevation(meters: number): string {
+    return `${formatNumber(convertElevation(meters))} ${elevationUnitLabel()}`;
+}
+
+/* -- lifecycle ------------------------------------------------------------ */
 
 onMounted(async () => {
     const p = pinia.value;
@@ -145,16 +240,29 @@ onMounted(async () => {
         // keep the 'feet' default
     }
 
-    await refresh();
+    if (expanded.value) await refresh();
 });
 
 onBeforeUnmount(() => destroyChart());
 
-watch(geometryKey, () => {
-    void refresh();
+// Only fetch once the section is actually open, matching core's behaviour
+watch([expanded, geometryKey, terrainId], async ([isExpanded]) => {
+    if (!isExpanded) return;
+    await refresh();
+});
+
+// Unit changes need a re-render but not a re-fetch
+watch([distanceUnit, elevationUnit], async () => {
+    if (!expanded.value || !profile.value) return;
+    await nextTick();
+    renderChart();
 });
 
 function destroyChart(): void {
+    if (resizeObserver) {
+        resizeObserver.disconnect();
+        resizeObserver = null;
+    }
     if (chart) {
         chart.destroy();
         chart = null;
@@ -168,6 +276,13 @@ async function refresh(): Promise<void> {
         return;
     }
 
+    const signature = `${terrainId.value}:${geometryKey.value}`;
+    if (loadedSignature.value === signature && profile.value) {
+        await nextTick();
+        renderChart();
+        return;
+    }
+
     loading.value = true;
     error.value = null;
 
@@ -178,6 +293,8 @@ async function refresh(): Promise<void> {
 
     try {
         profile.value = await loadProfile(terrainId.value, geometry);
+        loadedSignature.value = signature;
+        loading.value = false;
         await nextTick();
         renderChart();
     } catch (err) {
@@ -190,43 +307,120 @@ async function refresh(): Promise<void> {
 }
 
 function renderChart(): void {
-    const canvas = canvasRef.value;
-    const current = profile.value;
-    if (!canvas || !current) return;
+    if (!canvasRef.value || !samples.value.length) {
+        destroyChart();
+        return;
+    }
 
-    const points = current.samples.filter(
-        (s): s is { distance: number; elevation: number } => s.elevation !== null
-    );
+    const data: ChartData<'line'> = {
+        datasets: [{
+            label: 'Elevation',
+            data: samples.value.map((sample) => ({
+                x: convertDistance(sample.distance),
+                y: convertElevation(sample.elevation),
+            })),
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59, 130, 246, 0.2)',
+            fill: true,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            borderWidth: 2,
+            tension: 0.2,
+        }],
+    };
 
-    destroyChart();
-
-    chart = new Chart(canvas, {
-        type: 'line',
-        data: {
-            labels: points.map((s) => s.distance.toFixed(1)),
-            datasets: [{
-                data: points.map((s) => (
-                    elevationUnit.value === 'meter'
-                        ? s.elevation
-                        : s.elevation * 3.28084
-                )),
-                borderColor: '#1E90FF',
-                backgroundColor: 'rgba(30, 144, 255, 0.15)',
-                fill: true,
-                pointRadius: 0,
-                borderWidth: 2,
-                tension: 0.2,
-            }],
+    const options: ChartOptions<'line'> = {
+        responsive: false,
+        maintainAspectRatio: false,
+        animation: false,
+        normalized: true,
+        interaction: {
+            intersect: false,
+            mode: 'index',
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                x: { display: false },
-                y: { ticks: { maxTicksLimit: 4 } },
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+                callbacks: {
+                    label(context: TooltipItem<'line'>) {
+                        return `Elevation: ${displayElevation(
+                            elevationUnit.value === 'meter'
+                                ? Number(context.parsed.y)
+                                : Number(context.parsed.y) / 3.28084
+                        )}`;
+                    },
+                    title(items: TooltipItem<'line'>[]) {
+                        if (!items.length) return '';
+                        return `Distance: ${displayDistanceRaw(Number(items[0].parsed.x))}`;
+                    },
+                },
             },
         },
-    });
+        scales: {
+            x: {
+                type: 'linear',
+                title: {
+                    display: true,
+                    text: `Distance (${distanceUnitLabel()})`,
+                },
+                ticks: {
+                    callback(value) {
+                        return formatAxisValue(Number(value));
+                    },
+                },
+            },
+            y: {
+                title: {
+                    display: true,
+                    text: `Elevation (${elevationUnitLabel()})`,
+                },
+                ticks: {
+                    callback(value) {
+                        return formatAxisValue(Number(value));
+                    },
+                },
+            },
+        },
+    };
+
+    destroyChart();
+    chart = new Chart(canvasRef.value, { type: 'line', data, options });
+
+    if (shellRef.value) {
+        resizeObserver = new ResizeObserver((entries) => {
+            if (!chart) return;
+            requestAnimationFrame(() => {
+                if (!chart) return;
+                chart.resize(entries[0].contentRect.width, CHART_HEIGHT);
+            });
+        });
+        resizeObserver.observe(shellRef.value);
+    }
 }
 </script>
+
+<style scoped>
+.profile-chart-shell {
+    position: relative;
+    height: 220px;
+    overflow: hidden;
+}
+
+.profile-chart-shell canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.profile-stat {
+    height: 100%;
+    min-height: 3.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+:global(html[data-bs-theme='light'] .profile-stat) {
+    background: rgba(15, 23, 42, 0.03);
+    border-color: rgba(15, 23, 42, 0.08);
+}
+</style>
