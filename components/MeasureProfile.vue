@@ -169,9 +169,12 @@ import { terrainBasemapId, terrainEnabled } from '../lib/core-bridge.ts';
 import { pinia, unit as distanceUnit } from '../lib/state.ts';
 import { loadProfile, profileStats, type ElevationProfile } from '../lib/elevation.ts';
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
     coordinates: Position[];
-}>();
+    finished?: boolean;
+}>(), {
+    finished: false,
+});
 
 const CHART_HEIGHT = 220;
 
@@ -275,6 +278,12 @@ onBeforeUnmount(() => destroyChart());
 watch([expanded, geometryKey, terrainId], async ([isExpanded]) => {
     if (!isExpanded) return;
     await refresh();
+});
+
+// Opening Terrain Profile once the line is parked so the graph is ready
+// without leaving the draw incomplete.
+watch(() => props.finished, (isFinished) => {
+    if (isFinished) expanded.value = true;
 });
 
 // Unit changes need a re-render but not a re-fetch

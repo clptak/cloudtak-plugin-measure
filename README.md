@@ -81,15 +81,16 @@ Confirmed working locally:
 
 | Key | Action |
 |---|---|
-| `Enter` | Finish the line |
-| `Esc` | Cancel the in-progress line |
+| `Enter` | Finish the line (park it until Clear or Save) |
+| `Esc` | Finish a valid line (≥2 points); clear a short draft; dismiss the “new measurement?” prompt when already finished |
 | `Backspace` / `Delete` | Remove the last point |
 | `Cmd`/`Ctrl` + `Z` | Undo |
 | `Cmd`/`Ctrl` + `Shift` + `Z` | Redo |
 
-`Enter` and `Esc` are terra-draw's own `keyEvents`, pinned explicitly in `measure-draw.ts` so an
-upstream default change can't move them. The rest are window-level listeners, live only while
-measuring, and suppressed while focus is in a form field (`isTypingTarget`).
+`Enter` is terra-draw's own `finish` keyEvent, pinned explicitly in `measure-draw.ts` so an
+upstream default change can't move it. Esc is handled by the plugin so it parks a valid line
+instead of terra-draw's default cancel/`cleanUp` wipe. The rest are window-level listeners, live
+only while measuring, and suppressed while focus is in a form field (`isTypingTarget`).
 
 Undo uses terra-draw's undo stack, so a "step" is whatever it recorded — normally one vertex,
 but in route-snap mode one click can append a whole routed run, which undo reverses as a unit.

@@ -53,7 +53,7 @@
             </div>
 
             <div
-                v-if='measurement.segments.length'
+                v-if='measurement.segments.length && snapLayer === NO_SNAPPING'
                 class='px-1 py-1'
             >
                 <label class='subheader'>Segments</label>
@@ -98,9 +98,20 @@
                 </div>
             </div>
 
-            <MeasureProfile :coordinates='measurement.coordinates' />
+            <MeasureProfile
+                :coordinates='measurement.coordinates'
+                :finished='finished'
+            />
 
             <div class='btn-list px-1 pt-2'>
+                <button
+                    class='btn btn-sm'
+                    title='Finish the line (Enter)'
+                    :disabled='finished || measurement.coordinates.length < 2'
+                    @click='surface.finish()'
+                >
+                    Finish
+                </button>
                 <button
                     class='btn btn-sm'
                     title='Remove the last point (Backspace)'
@@ -176,7 +187,7 @@
             </div>
 
             <div class='subheader px-1 pt-2 text-muted'>
-                Enter finishes · Esc cancels · Backspace removes last point
+                Enter / Finish parks the line · Esc finishes or clears a short draft · Backspace removes last point
             </div>
         </template>
     </div>
@@ -196,6 +207,7 @@ const measurement = computed(() => {
 
 const undoAvailable = computed(() => surface.value?.undoAvailable.value ?? false);
 const redoAvailable = computed(() => surface.value?.redoAvailable.value ?? false);
+const finished = computed(() => surface.value?.finished.value ?? false);
 const promptNewMeasurement = computed(() => surface.value?.promptNewMeasurement.value ?? false);
 
 const snapOptions = computed(() => {

@@ -110,9 +110,9 @@ export default class MeasureDraw {
 
         type ModeList = ConstructorParameters<typeof terraDraw.TerraDraw>[0]['modes'];
 
-        // Both modes already default to these, but pinning them means an
-        // upstream default change can't silently move our shortcuts.
-        const keyEvents = { cancel: 'Escape', finish: 'Enter' };
+        // Enter finishes via terra-draw. Esc is handled in onKeyDown so a
+        // valid line parks instead of being wiped by cleanUp().
+        const keyEvents = { cancel: null, finish: 'Enter' };
 
         const modes: ModeList = [
             new terraDraw.TerraDrawLineStringMode({
@@ -235,10 +235,11 @@ export default class MeasureDraw {
 
         /**
          * Backspace / Delete removes the last vertex; Cmd/Ctrl+Z undoes and
-         * Cmd/Ctrl+Shift+Z redoes.
+         * Cmd/Ctrl+Shift+Z redoes; Esc finishes a valid line (or clears a
+         * short draft).
          *
-         * Escape (cancel) and Enter (finish) are handled by terra-draw's own
-         * `keyEvents`, configured above — deliberately not duplicated here.
+         * Enter (finish) is handled by terra-draw's own `keyEvents`. Esc is
+         * ours so it parks instead of deleting via cleanUp().
          */
         this.onKeyDown = (ev: KeyboardEvent) => {
             if (!this.active.value) return;
@@ -250,6 +251,20 @@ export default class MeasureDraw {
                 ev.preventDefault();
                 if (ev.shiftKey) this.redo();
                 else this.undo();
+                return;
+            }
+
+            if (ev.key === 'Escape') {
+                ev.preventDefault();
+                if (this.finished.value) {
+                    this.dismissPrompt();
+                    return;
+                }
+                if (this.measurement.value.coordinates.length >= 2) {
+                    this.finish();
+                    return;
+                }
+                this.clear();
                 return;
             }
 
@@ -362,6 +377,21 @@ export default class MeasureDraw {
         this.snapLayer.value = layer;
         if (!this.active.value) return;
         this.draw.setMode(this.modeForSnapping());
+    }
+
+    /**
+     * Finish the in-progress line and park in static mode.
+     *
+     * Mirrors core's `DrawTool.finish()` — linestring / routesnap respond to
+     * Enter on the canvas — so terra-draw's own close path runs and fires our
+     * `finish` listener.
+     */
+    public finish(): void {
+        if (!this.active.value || this.finished.value) return;
+        if (this.measurement.value.coordinates.length < 2) return;
+
+        const canvas = this.map.getCanvas();
+        canvas.dispatchEvent(new KeyboardEvent('keyup', { key: 'Enter', bubbles: true }));
     }
 
     /** Discard the current measurement but stay active and ready to draw */
