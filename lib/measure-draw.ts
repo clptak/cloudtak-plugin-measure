@@ -194,11 +194,48 @@ export default class MeasureDraw {
             // ever reports the first LineString in the snapshot. The UI offers
             // to clear instead.
             this.finished.value = true;
-            try {
-                this.draw.setMode(STATIC_MODE);
-            } catch (err) {
-                console.warn('[measure] could not park draw surface', err);
-            }
+            const parked = this.measurement.value.coordinates.map(
+                (c) => c.slice() as Position
+            );
+
+            // CRITICAL: do NOT setMode(static) synchronously here.
+            // TerraDrawRouteSnapMode.finish() calls onFinish *before* close(),
+            // so currentId is still set. Mode.stop() → cleanUp() would delete
+            // the finished line (LineStringMode clears currentId first, which
+            // is why no-snap looked fine locally). Defer until close() runs.
+            queueMicrotask(() => {
+                if (!this.active.value || !this.finished.value) return;
+
+                try {
+                    this.draw.setMode(STATIC_MODE);
+                } catch (err) {
+                    console.warn('[measure] could not park draw surface', err);
+                }
+
+                this.recompute();
+
+                // If something still wiped the store, put the line back so the
+                // map overlay and terrain profile stay usable.
+                if (!this.measurement.value.coordinates.length && parked.length >= 2) {
+                    const mode = this.modeForSnapping();
+                    try {
+                        this.draw.addFeatures([{
+                            id: randomUUID(),
+                            type: 'Feature',
+                            geometry: { type: 'LineString', coordinates: parked },
+                            properties: { mode },
+                        }]);
+                    } catch (err) {
+                        console.warn('[measure] could not restore parked line', err);
+                        this.measurement.value = measure(parked);
+                        return;
+                    }
+                    this.recompute();
+                    if (!this.measurement.value.coordinates.length) {
+                        this.measurement.value = measure(parked);
+                    }
+                }
+            });
         });
 
         this.onMoveEnd = () => {
