@@ -34,13 +34,6 @@
                     </div>
 
                     <div
-                        v-else-if='!terrainOn'
-                        class='px-1 py-1 text-muted'
-                    >
-                        Enable 3D terrain to see a profile.
-                    </div>
-
-                    <div
                         v-else-if='coordinates.length < 2'
                         class='px-1 py-1 text-muted'
                     >
@@ -165,8 +158,8 @@ import Chart from 'chart.js/auto';
 import { IconChartLine, IconArrowUp, IconArrowDown } from '@tabler/icons-vue';
 import { TablerBadge, TablerLoading } from '@tak-ps/vue-tabler';
 import SlideDownHeader from '../../../src/components/CloudTAK/util/SlideDownHeader.vue';
-import { terrainBasemapId, terrainEnabled } from '../lib/core-bridge.ts';
-import { pinia, unit as distanceUnit } from '../lib/state.ts';
+import { terrainBasemapId } from '../lib/core-bridge.ts';
+import { unit as distanceUnit } from '../lib/state.ts';
 import { loadProfile, profileStats, type ElevationProfile } from '../lib/elevation.ts';
 
 const props = withDefaults(defineProps<{
@@ -180,7 +173,6 @@ const CHART_HEIGHT = 220;
 
 const expanded = ref(false);
 const terrainId = ref<number | undefined>(undefined);
-const terrainOn = ref(false);
 /**
  * Imperial by default, regardless of the server's `display_elevation` setting.
  * The Feet/Meters toggle above the stats overrides it per session.
@@ -264,9 +256,6 @@ function displayElevation(meters: number): string {
 /* -- lifecycle ------------------------------------------------------------ */
 
 onMounted(async () => {
-    const p = pinia.value;
-    if (p) terrainOn.value = terrainEnabled(p);
-
     terrainId.value = await terrainBasemapId();
 
     if (expanded.value) await refresh();
@@ -305,7 +294,7 @@ function destroyChart(): void {
 }
 
 async function refresh(): Promise<void> {
-    if (!terrainId.value || !terrainOn.value || props.coordinates.length < 2) {
+    if (!terrainId.value || props.coordinates.length < 2) {
         destroyChart();
         profile.value = null;
         return;

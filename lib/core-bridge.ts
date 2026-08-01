@@ -35,8 +35,9 @@ type CoreDrawTool = {
 };
 
 /**
- * Id of the raster-dem basemap configured as terrain, or undefined when 3D
- * terrain isn't configured. Mirrors `stores/map.ts:479-482`.
+ * Id of the raster-dem basemap configured as terrain (`map::terrain`), or
+ * undefined when none is set. Used by the elevation profile API; does not
+ * require MapLibre 3D terrain to be enabled. Mirrors `stores/map.ts:479-482`.
  */
 export async function terrainBasemapId(): Promise<number | undefined> {
     try {
@@ -48,16 +49,6 @@ export async function terrainBasemapId(): Promise<number | undefined> {
     } catch (err) {
         console.warn('[measure] failed to read terrain basemap config', err);
         return undefined;
-    }
-}
-
-/** Is 3D terrain currently enabled on the map? (`stores/map.ts:131`) */
-export function terrainEnabled(pinia: Pinia): boolean {
-    try {
-        const mapStore = useMapStore(pinia);
-        return !!(mapStore as unknown as { terrainEnabled?: boolean }).terrainEnabled;
-    } catch {
-        return false;
     }
 }
 
