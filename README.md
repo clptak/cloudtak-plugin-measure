@@ -8,9 +8,9 @@ See [`docs/PLAN.md`](docs/PLAN.md) for the full architecture and phased plan.
 
 ## Status
 
-Phase 0 spike — the draw surface, bottom-bar toggle, results pane, distance/bearing maths and
-snapping bridge are in place and pass lint + typecheck. **Runtime validation in the browser is
-still outstanding.**
+Phase 0 spike — the draw surface, left-control ruler toggle, results pane, distance/bearing
+maths and snapping bridge are in place and pass lint + typecheck. **Runtime validation in the
+browser is still outstanding.**
 
 ## Install
 
@@ -23,6 +23,30 @@ cd ~/CloudTAK/api/web && npm run serve   # or: npm run build
 
 `api/web/plugins/` is gitignored, so the symlink never shows up in CloudTAK's git status.
 
+The ruler is not a bottom-bar plugin. `PluginPane` is a 50px strip that opens for every
+registered item, and the button is teleported out of that slot. `enable()` only
+`remove`s a stale `measure` key, then mounts the toggle on a hidden host.
+
+This behavior lives in this repo (`index.ts`, `lib/toggle-host.ts`, `lib/mount-toggle.ts`).
+A CloudTAK core update does not overwrite it. It reaches a VPS only when the image is
+rebuilt from a commit that contains it — either via `WEB_PLUGINS` or from a plugin folder
+already inside the CloudTAK tree (that folder is used instead of a fresh clone). After
+deploy, hard-refresh. The image keeps plugin source under `/home/etl/app/plugins/`.
+`WEB_PLUGINS` names the folder after the git repo (`cloudtak-plugin-measure`). A folder
+that already exists is not re-cloned, so a local `plugins/measure` copy stays until you
+replace it. Confirm the copy that was built has no `bottomBar.add`:
+
+```sh
+docker exec <cloudtak> sh -c 'grep -n "bottomBar.add" \
+  /home/etl/app/plugins/measure/index.ts \
+  /home/etl/app/plugins/cloudtak-plugin-measure/index.ts'
+```
+
+That grep should print nothing. In Default mode the map has a `.measure-toggle-shell` ruler
+under the left controls and no empty `.plugin-pane` from this plugin. If a core update
+conflicts with a local copy of the plugin, keep this repo's `attachMeasureChrome` path and
+do not restore `bottomBar.add`.
+
 ## Layout
 
 | Path | Purpose |
@@ -32,7 +56,7 @@ cd ~/CloudTAK/api/web && npm run serve   # or: npm run build
 | `lib/core-bridge.ts` | Every reach into CloudTAK core internals, guarded and in one place |
 | `lib/state.ts` | Module-scoped shared state between the toggle and the pane |
 | `lib/units.ts` | Distance formatting, mirroring core's `LineLength.vue` |
-| `components/MeasureToggle.vue` | Ruler button, registered via `api.bottomBar.add()` |
+| `components/MeasureToggle.vue` | Ruler button, mounted by the plugin and teleported under the left map controls |
 | `components/MeasurePane.vue` | Floating results pane |
 
 ## Import paths

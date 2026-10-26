@@ -16,10 +16,10 @@ import ProfileConfig from '../../src/base/profile.ts';
 import MeasureDraw from './lib/measure-draw.ts';
 import * as state from './lib/state.ts';
 import { cancelCoreDraw } from './lib/core-bridge.ts';
-import MeasureToggle from './components/MeasureToggle.vue';
+import { mountMeasureToggle, unmountMeasureToggle } from './lib/mount-toggle.ts';
+import { attachMeasureChrome, detachMeasureChrome } from './lib/toggle-host.ts';
 import MeasurePane from './components/MeasurePane.vue';
 
-const BOTTOM_BAR_KEY = 'measure';
 const FLOAT_UID = 'measure';
 
 export default class MeasurePlugin implements PluginInstance {
@@ -72,9 +72,11 @@ export default class MeasurePlugin implements PluginInstance {
             }
         });
 
-        this.api.bottomBar.add({
-            key: BOTTOM_BAR_KEY,
-            component: MeasureToggle,
+        // Not a bottom-bar item: PluginPane stays 50px tall for every
+        // registered key, and the ruler is teleported out of that slot.
+        attachMeasureChrome({
+            bottomBar: this.api.bottomBar,
+            mountToggle: mountMeasureToggle,
         });
     }
 
@@ -84,7 +86,10 @@ export default class MeasurePlugin implements PluginInstance {
             this.stopActiveWatch = undefined;
         }
 
-        this.api.bottomBar.remove(BOTTOM_BAR_KEY);
+        detachMeasureChrome({
+            bottomBar: this.api.bottomBar,
+            unmountToggle: unmountMeasureToggle,
+        });
 
         if (this.api.float.has(FLOAT_UID)) {
             this.api.float.remove(FLOAT_UID);

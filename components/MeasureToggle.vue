@@ -1,9 +1,10 @@
 <template>
     <!--
-        Registered through api.bottomBar.add(), but renders nothing inline.
-        The button is teleported to <body> and anchored directly beneath the
-        left-margin map controls stack (Map.vue:120), which has no plugin hook
-        of its own.
+        Mounted by the plugin (not api.bottomBar). Renders nothing in its host
+        node. The button is teleported to <body> and anchored directly beneath
+        the left-margin map controls stack (Map.vue:120), which has no plugin
+        hook of its own. A bottom-bar registration would open PluginPane as an
+        empty 50px strip, because this template leaves that slot vacant.
 
         Anchoring to that element rather than using fixed offsets does two jobs:
         the button tracks the stack as it grows/shrinks (the pitch and zoom

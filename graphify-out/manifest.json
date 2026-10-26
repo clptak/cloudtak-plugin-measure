@@ -1,0 +1,140 @@
+{
+  "components/MeasurePane.vue": {
+    "mtime": 1785171820.5386906,
+    "seen": 1793026985.705927,
+    "ast_hash": "d974b49279d60b9d13144f6aab03e0f4",
+    "semantic_hash": ""
+  },
+  "components/MeasureProfile.vue": {
+    "mtime": 1785618556.001353,
+    "seen": 1793026985.70593,
+    "ast_hash": "ee5d1b012256bb4de4fa1be45ee67270",
+    "semantic_hash": ""
+  },
+  "components/MeasureToggle.vue": {
+    "mtime": 1793026814.4247985,
+    "seen": 1793026985.705931,
+    "ast_hash": "4d8a04cdf4aeb364600dbc32c6f6a45c",
+    "semantic_hash": ""
+  },
+  "index.ts": {
+    "mtime": 1793026813.2085705,
+    "seen": 1793026985.705931,
+    "ast_hash": "7cd43a91c0e07b7851aed7e076b0e63f",
+    "semantic_hash": ""
+  },
+  "lib/core-bridge.ts": {
+    "mtime": 1785618560.620767,
+    "seen": 1793026985.7059321,
+    "ast_hash": "703c354275decdae014d3ffb26035724",
+    "semantic_hash": ""
+  },
+  "lib/elevation.ts": {
+    "mtime": 1785009602.7266839,
+    "seen": 1793026985.7059321,
+    "ast_hash": "ad6f775862e231bb8eef89b9b87fba06",
+    "semantic_hash": ""
+  },
+  "lib/geometry.ts": {
+    "mtime": 1785010846.856797,
+    "seen": 1793026985.7059321,
+    "ast_hash": "c4fa3787b7b44001106725fd93dd04ae",
+    "semantic_hash": ""
+  },
+  "lib/measure-draw.ts": {
+    "mtime": 1785175417.0816545,
+    "seen": 1793026985.705933,
+    "ast_hash": "9e2083bb094c2d960df576497488e0d6",
+    "semantic_hash": ""
+  },
+  "lib/mount-toggle.ts": {
+    "mtime": 1793026810.1786866,
+    "seen": 1793026985.705933,
+    "ast_hash": "fc31bcfc2f844adfe4c94610969d0a61",
+    "semantic_hash": ""
+  },
+  "lib/profile-stats.ts": {
+    "mtime": 1785009592.3135688,
+    "seen": 1793026985.705933,
+    "ast_hash": "fd51160253566dc54abc5748e94b59be",
+    "semantic_hash": ""
+  },
+  "lib/state.ts": {
+    "mtime": 1785008605.0578723,
+    "seen": 1793026985.705934,
+    "ast_hash": "abc035e912cd4c20f1defb8d4e7855df",
+    "semantic_hash": ""
+  },
+  "lib/toggle-host.ts": {
+    "mtime": 1793026808.6143892,
+    "seen": 1793026985.705934,
+    "ast_hash": "62a86cbf40fb872e82f5c1fa26e25f91",
+    "semantic_hash": ""
+  },
+  "lib/units.ts": {
+    "mtime": 1785002200.595976,
+    "seen": 1793026985.705935,
+    "ast_hash": "34ba1813c97b8a0b421a45cc79f3e694",
+    "semantic_hash": ""
+  },
+  "package.json": {
+    "mtime": 1785009644.2338798,
+    "seen": 1793026985.705935,
+    "ast_hash": "3ba914d55c09c04e50cc7caa72bf1e84",
+    "semantic_hash": ""
+  },
+  "scripts/check-like-docker.sh": {
+    "mtime": 1785905954.0337625,
+    "seen": 1793026985.705935,
+    "ast_hash": "0892faf78dbb0ec42f1dc4049a5550cd",
+    "semantic_hash": ""
+  },
+  "test/geometry.spec.ts": {
+    "mtime": 1785009734.6767497,
+    "seen": 1793026985.705936,
+    "ast_hash": "8747e35ba418b497fd5eed47d896acdc",
+    "semantic_hash": ""
+  },
+  "test/keyboard.spec.ts": {
+    "mtime": 1785010878.6475568,
+    "seen": 1793026985.705936,
+    "ast_hash": "ecf54f4c166ad310c9a71e4e2dd8a928",
+    "semantic_hash": ""
+  },
+  "test/profile-stats.spec.ts": {
+    "mtime": 1785009697.1032405,
+    "seen": 1793026985.705936,
+    "ast_hash": "06a6aa3a1fde8abed59306feef801234",
+    "semantic_hash": ""
+  },
+  "test/toggle-host.spec.ts": {
+    "mtime": 1793026952.2655492,
+    "seen": 1793026985.705937,
+    "ast_hash": "4ee6482f07400dada97b81539e2e607c",
+    "semantic_hash": ""
+  },
+  "test/units.spec.ts": {
+    "mtime": 1785009682.7453375,
+    "seen": 1793026985.705937,
+    "ast_hash": "27c531bdea7b720039101cb58cdde8aa",
+    "semantic_hash": ""
+  },
+  "vitest.config.ts": {
+    "mtime": 1785009892.018242,
+    "seen": 1793026985.705937,
+    "ast_hash": "7e685bed80e2f1e46c6a97d821868c0c",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1793026881.887598,
+    "seen": 1793026985.7059379,
+    "ast_hash": "80f5ee2b4043516a57237fa8d75803df",
+    "semantic_hash": ""
+  },
+  "docs/TESTING.md": {
+    "mtime": 1793026889.2354472,
+    "seen": 1793026985.7059379,
+    "ast_hash": "78058941fd52b17a047c102b3f9e7d91",
+    "semantic_hash": ""
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "0": "MeasurePane.vue",
+  "1": "index.ts",
+  "2": "MeasureProfile.vue",
+  "3": "measure-draw.ts",
+  "4": "MeasureDraw",
+  "5": "core-bridge.ts",
+  "6": "elevation.ts",
+  "7": "package.json",
+  "8": "Testing",
+  "9": "check-like-docker.sh",
+  "10": "vitest.config.ts"
+}

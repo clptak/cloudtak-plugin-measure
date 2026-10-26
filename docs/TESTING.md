@@ -8,13 +8,14 @@ npm install     # vitest only; no runtime deps
 npm test
 ```
 
-43 tests covering the three dependency-free modules:
+53 tests covering the dependency-free modules:
 
 | Module | Covers |
 |---|---|
 | `lib/geometry.ts` | haversine distance, true bearing, per-segment measurement, marker-snap nearest-within, zoom-scaled snap threshold |
 | `lib/units.ts` | distance conversion factors, formatting, bearing padding, unit fallback |
 | `lib/profile-stats.ts` | min/max/gain/loss, null-sample handling, negative elevations |
+| `lib/toggle-host.ts` | ruler attach/detach never calls `bottomBar.add`; `index.ts` has no `bottomBar.add` |
 
 ### Why only those three
 
