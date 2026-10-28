@@ -34,6 +34,7 @@ import {
 import {
     coreRoutingGraph,
     expandGraphForViewport,
+    isCoreDrawActive,
     snapPoints,
     NO_SNAPPING,
 } from './core-bridge.ts';
@@ -426,6 +427,28 @@ export default class MeasureDraw {
     public finish(): void {
         if (!this.active.value || this.finished.value) return;
         if (this.measurement.value.coordinates.length < 2) return;
+
+        /*
+         * terra-draw exposes no public "finish the current drawing" call, so
+         * the only way in is the synthetic Enter its modes listen for — the
+         * same trick core uses (draw.ts:759-761).
+         *
+         * The hazard: core's TerraDraw binds to this exact canvas element and
+         * also treats Enter as finish. If core's surface were live, this event
+         * would close CORE's geometry too, which ends in
+         * `worker.db.add(feat, { authored: true })` — a CoT pushed to any
+         * Active Data Sync. That is precisely what this plugin exists to avoid,
+         * so refuse rather than risk it.
+         *
+         * Mutual exclusion (MeasureToggle's coreDrawActive watcher) should have
+         * closed the ruler already; this is the deterministic backstop. Core
+         * being in STATIC also means core called `draw.stop()`, which
+         * unregisters its adapter's listeners entirely.
+         */
+        if (isCoreDrawActive(this.pinia)) {
+            console.warn('[measure] not finishing: core draw surface is active');
+            return;
+        }
 
         const canvas = this.map.getCanvas();
         canvas.dispatchEvent(new KeyboardEvent('keyup', { key: 'Enter', bubbles: true }));

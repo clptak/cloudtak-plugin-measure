@@ -32,8 +32,22 @@ type CoreDrawTool = {
     snappingLayer?: string;
     updateGraph?: (opts?: { expand?: boolean }) => Promise<void>;
     populateSnappingLayers?: () => Promise<void>;
+    removeNetwork?: () => Promise<void>;
     finish?: () => Promise<void>;
 };
+
+/**
+ * Did the ruler cause core to paint the snapping-graph overlay?
+ *
+ * `updateGraph()` adds the MapLibre `snapping-graph-source` /
+ * `snapping-graph-layer` (draw.ts:651-681). Core removes them in
+ * `removeNetwork()`, which only runs from `start()` for a non-SNAPPING mode or
+ * from `stop()`. The ruler never puts core into SNAPPING mode, so nothing ever
+ * tears down an overlay the ruler created — see issue #3.
+ *
+ * Tracked so teardown only removes an overlay the ruler is responsible for.
+ */
+let rulerPaintedNetwork = false;
 
 /**
  * Id of the raster-dem basemap configured as terrain (`map::terrain`), or
@@ -221,6 +235,7 @@ export async function selectSnappingLayer(pinia: Pinia, layer: string): Promise<
             // any tile-cover happens.
             clampGraphZoom(pinia);
             await draw.updateGraph();
+            rulerPaintedNetwork = true;
         }
 
         return true;
@@ -242,16 +257,59 @@ export async function selectSnappingLayer(pinia: Pinia, layer: string): Promise<
 export async function resetSnappingLayer(pinia: Pinia): Promise<void> {
     const draw = drawTool(pinia);
     if (!draw) return;
-    if (snappingLayer(pinia) === NO_SNAPPING) return;
 
     try {
-        if (typeof draw.snappingLayer === 'string') {
-            draw.snappingLayer = NO_SNAPPING;
-        } else if (draw.route) {
-            draw.route.layer = NO_SNAPPING;
+        if (snappingLayer(pinia) !== NO_SNAPPING) {
+            if (typeof draw.snappingLayer === 'string') {
+                draw.snappingLayer = NO_SNAPPING;
+            } else if (draw.route) {
+                draw.route.layer = NO_SNAPPING;
+            }
         }
+
+        await clearRulerNetworkOverlay(pinia, draw);
     } catch (err) {
         console.warn('[measure] failed to reset snapping layer', err);
+    }
+}
+
+/**
+ * Remove the cyan dashed snapping-graph overlay the ruler caused core to paint.
+ *
+ * Fixes issue #3: the `snappingLayer` setter only reaches `removeNetwork()` via
+ * `start(LINESTRING)` when core is in SNAPPING mode (draw.ts:130-133). The ruler
+ * runs its own TerraDraw surface and leaves core in STATIC, so that branch never
+ * fires and the overlay is orphaned at the last extent.
+ *
+ * GUARDED, and the guard matters. `resetSnappingLayer()` runs from `close()`,
+ * and `close()` fires from the `coreDrawActive` watcher the moment the user
+ * opens core Drawing Tools. An unconditional `removeNetwork()` here would clear
+ * `route.tiles` and empty the shared routing graph exactly as core starts
+ * snapping — manufacturing the "snapping silently does nothing" symptom of
+ * dfpc-coe/CloudTAK#1982.
+ *
+ * Skipping in that case is safe: core's own `start()` calls `removeNetwork()`
+ * for any non-SNAPPING mode, so core cleans up the overlay itself.
+ */
+async function clearRulerNetworkOverlay(
+    pinia: Pinia,
+    draw: CoreDrawTool
+): Promise<void> {
+    if (!rulerPaintedNetwork) return;
+    if (typeof draw.removeNetwork !== 'function') return;
+
+    if (isCoreDrawActive(pinia)) {
+        // Core owns the surface now — let it manage its own overlay
+        rulerPaintedNetwork = false;
+        return;
+    }
+
+    try {
+        await draw.removeNetwork();
+    } catch (err) {
+        console.warn('[measure] failed to remove snapping network overlay', err);
+    } finally {
+        rulerPaintedNetwork = false;
     }
 }
 
