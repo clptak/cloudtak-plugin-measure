@@ -47,6 +47,21 @@ under the left controls and no empty `.plugin-pane` from this plugin. If a core 
 conflicts with a local copy of the plugin, keep this repo's `attachMeasureChrome` path and
 do not restore `bottomBar.add`.
 
+Terrain profile reads `map::terrain` with `Config.refresh` in `lib/core-bridge.ts`. A core
+update does not revert that. The same rebuild rule applies: replace an existing plugin
+folder or point `WEB_PLUGINS` at a commit that contains the refresh call, then rebuild and
+hard-refresh. After deploy:
+
+```sh
+docker exec <cloudtak> sh -c 'grep -n "Config.refresh" \
+  /home/etl/app/plugins/measure/lib/core-bridge.ts \
+  /home/etl/app/plugins/cloudtak-plugin-measure/lib/core-bridge.ts'
+```
+
+Expected: a `Config.refresh(['map::terrain'])` hit, and no `map::terrain': null`. If a
+local plugin copy conflicts, keep this repo's `terrainBasemapId`. Retire this note if
+upstream Measure ships the same refresh call.
+
 ## Layout
 
 | Path | Purpose |

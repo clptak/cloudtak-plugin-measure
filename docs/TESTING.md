@@ -8,20 +8,23 @@ npm install     # vitest only; no runtime deps
 npm test
 ```
 
-53 tests covering the dependency-free modules:
+56 tests covering the dependency-free modules:
 
 | Module | Covers |
 |---|---|
 | `lib/geometry.ts` | haversine distance, true bearing, per-segment measurement, marker-snap nearest-within, zoom-scaled snap threshold |
 | `lib/units.ts` | distance conversion factors, formatting, bearing padding, unit fallback |
 | `lib/profile-stats.ts` | min/max/gain/loss, null-sample handling, negative elevations |
+| `lib/terrain-id.ts` | positive integer basemap ids, including numeric strings; rejects null, zero, negatives, and non-integers |
 | `lib/toggle-host.ts` | ruler attach/detach never calls `bottomBar.add`; `index.ts` has no `bottomBar.add` |
+| `lib/core-bridge.ts` | source scan only: `terrainBasemapId` calls `Config.refresh(['map::terrain'])` and does not cache a null default |
 
-### Why only those three
+### Why these modules
 
-Everything else (`measure-draw.ts`, `core-bridge.ts`, the components) imports CloudTAK core or
-terra-draw, which only resolve through `api/web`'s Vite config. The measurement maths was
-deliberately extracted into dependency-free modules so it can be tested without that machinery.
+`measure-draw.ts` and the components import CloudTAK core or terra-draw, which only resolve
+through `api/web`'s Vite config. The measurement maths was deliberately extracted into
+dependency-free modules so it can be tested without that machinery. `core-bridge.ts` is not
+imported by the tests; `test/terrain-config.spec.ts` reads the source as text.
 
 `lib/geometry.ts` reimplements `@turf/distance` rather than importing it — same haversine
 formula, same 6371.0088 km earth radius from `@turf/helpers`. Two tests pin that constant, so

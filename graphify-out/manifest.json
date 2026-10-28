@@ -6,9 +6,9 @@
     "semantic_hash": ""
   },
   "components/MeasureProfile.vue": {
-    "mtime": 1785618556.001353,
-    "seen": 1793026985.70593,
-    "ast_hash": "ee5d1b012256bb4de4fa1be45ee67270",
+    "mtime": 1793147083.3977547,
+    "seen": 1793147117.060242,
+    "ast_hash": "4926d7885d174cc4904888b8c831f5f2",
     "semantic_hash": ""
   },
   "components/MeasureToggle.vue": {
@@ -24,9 +24,9 @@
     "semantic_hash": ""
   },
   "lib/core-bridge.ts": {
-    "mtime": 1785618560.620767,
-    "seen": 1793026985.7059321,
-    "ast_hash": "703c354275decdae014d3ffb26035724",
+    "mtime": 1793146963.3796778,
+    "seen": 1793147117.060245,
+    "ast_hash": "f7447040a5c3bbc8f83d41782b651fb9",
     "semantic_hash": ""
   },
   "lib/elevation.ts": {
@@ -126,15 +126,33 @@
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1793026881.887598,
-    "seen": 1793026985.7059379,
-    "ast_hash": "80f5ee2b4043516a57237fa8d75803df",
+    "mtime": 1793147008.862828,
+    "seen": 1793147117.060256,
+    "ast_hash": "bb2aa26484ce04ee62dc75cd8954050b",
     "semantic_hash": ""
   },
   "docs/TESTING.md": {
-    "mtime": 1793026889.2354472,
-    "seen": 1793026985.7059379,
-    "ast_hash": "78058941fd52b17a047c102b3f9e7d91",
+    "mtime": 1793147011.0317369,
+    "seen": 1793147117.060256,
+    "ast_hash": "221ccc1538ecfcef49e976846b9b5ce5",
+    "semantic_hash": ""
+  },
+  "lib/terrain-id.ts": {
+    "mtime": 1793146938.1843956,
+    "seen": 1793147117.060249,
+    "ast_hash": "e6a155c70d9c637112e1e76417dc2092",
+    "semantic_hash": ""
+  },
+  "test/terrain-config.spec.ts": {
+    "mtime": 1793146952.3696299,
+    "seen": 1793147117.060253,
+    "ast_hash": "51e6cab62cf166ee2038871edbf838b5",
+    "semantic_hash": ""
+  },
+  "test/terrain-id.spec.ts": {
+    "mtime": 1793146912.023546,
+    "seen": 1793147117.0602539,
+    "ast_hash": "53be74ec9025322e52caa683b36554e4",
     "semantic_hash": ""
   }
 }

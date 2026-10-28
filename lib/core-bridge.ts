@@ -13,6 +13,7 @@ import type { Position } from 'geojson';
 import { v4 as uuid } from 'uuid';
 import { useMapStore } from '../../../src/stores/map.ts';
 import Config from '../../../src/base/config.ts';
+import { terrainIdFromValue } from './terrain-id.ts';
 
 /** Mirrors DrawToolMode.STATIC in api/web/src/stores/modules/draw.ts:36 */
 export const CORE_STATIC_MODE = 'static';
@@ -37,18 +38,27 @@ type CoreDrawTool = {
 /**
  * Id of the raster-dem basemap configured as terrain (`map::terrain`), or
  * undefined when none is set. Used by the elevation profile API; does not
- * require MapLibre 3D terrain to be enabled. Mirrors `stores/map.ts:479-482`.
+ * require MapLibre 3D terrain to be enabled.
+ *
+ * `Config.list` with a null default writes that null into IndexedDB. The next
+ * read treats the row as a cache hit and never asks the server, so an admin
+ * setting the key later stays invisible. `refresh` always hits the network
+ * and overwrites that row when the server returns an id. The cache is used
+ * only when the refresh request itself fails.
  */
 export async function terrainBasemapId(): Promise<number | undefined> {
     try {
-        const cfg = await Config.list(['map::terrain'], {
-            defaults: { 'map::terrain': null }
-        });
-        const value = cfg['map::terrain'];
-        return value ? Number(value) : undefined;
+        const cfg = await Config.refresh(['map::terrain']);
+        return terrainIdFromValue(cfg['map::terrain']);
     } catch (err) {
         console.warn('[measure] failed to read terrain basemap config', err);
-        return undefined;
+        try {
+            const cached = await Config.list(['map::terrain']);
+            return terrainIdFromValue(cached['map::terrain']);
+        } catch (cacheErr) {
+            console.warn('[measure] failed to read cached terrain basemap config', cacheErr);
+            return undefined;
+        }
     }
 }
 

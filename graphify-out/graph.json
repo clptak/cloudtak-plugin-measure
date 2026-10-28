@@ -46,6 +46,58 @@
       "source_location": "L3"
     },
     {
+      "id": "lib_profile_stats_elevationprofile",
+      "label": "ElevationProfile",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "MeasureProfile.vue",
+      "file_type": "code",
+      "norm_label": "elevationprofile",
+      "source_file": "lib/profile-stats.ts",
+      "source_location": "L11"
+    },
+    {
+      "id": "lib_profile_stats_elevationsample",
+      "label": "ElevationSample",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "MeasureProfile.vue",
+      "file_type": "code",
+      "norm_label": "elevationsample",
+      "source_file": "lib/profile-stats.ts",
+      "source_location": "L6"
+    },
+    {
+      "id": "lib_profile_stats_profilestats",
+      "label": "profileStats",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "MeasureProfile.vue",
+      "file_type": "code",
+      "norm_label": "profilestats",
+      "source_file": "lib/profile-stats.ts",
+      "source_location": "L29"
+    },
+    {
+      "id": "lib_geometry_measurement",
+      "label": "Measurement",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "measure-draw.ts",
+      "file_type": "code",
+      "norm_label": "measurement",
+      "source_file": "lib/geometry.ts",
+      "source_location": "L19"
+    },
+    {
       "id": "lib_geometry_position",
       "label": "Position",
       "_callable": true,
@@ -72,19 +124,6 @@
       "source_location": "L12"
     },
     {
-      "id": "lib_geometry_measurement",
-      "label": "Measurement",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "MeasureDraw",
-      "file_type": "code",
-      "norm_label": "measurement",
-      "source_file": "lib/geometry.ts",
-      "source_location": "L19"
-    },
-    {
       "id": "lib_measure_draw_measuredraw",
       "label": "MeasureDraw",
       "_callable": true,
@@ -108,46 +147,7 @@
       "file_type": "code",
       "norm_label": "coredrawtool",
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L23"
-    },
-    {
-      "id": "lib_profile_stats_elevationprofile",
-      "label": "ElevationProfile",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "elevation.ts",
-      "file_type": "code",
-      "norm_label": "elevationprofile",
-      "source_file": "lib/profile-stats.ts",
-      "source_location": "L11"
-    },
-    {
-      "id": "lib_profile_stats_elevationsample",
-      "label": "ElevationSample",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "elevation.ts",
-      "file_type": "code",
-      "norm_label": "elevationsample",
-      "source_file": "lib/profile-stats.ts",
-      "source_location": "L6"
-    },
-    {
-      "id": "lib_profile_stats_profilestats",
-      "label": "profileStats",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "elevation.ts",
-      "file_type": "code",
-      "norm_label": "profilestats",
-      "source_file": "lib/profile-stats.ts",
-      "source_location": "L29"
+      "source_location": "L24"
     },
     {
       "id": "components_measurepane_save",
@@ -195,19 +195,7 @@
       "file_type": "code",
       "norm_label": "iscoredrawactive()",
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L73"
-    },
-    {
-      "id": "lib_core_bridge_populatesnappinglayers",
-      "label": "populateSnappingLayers()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "MeasurePane.vue",
-      "file_type": "code",
-      "norm_label": "populatesnappinglayers()",
-      "source_file": "lib/core-bridge.ts",
-      "source_location": "L122"
+      "source_location": "L83"
     },
     {
       "id": "lib_core_bridge_saveline",
@@ -219,7 +207,7 @@
       "file_type": "code",
       "norm_label": "saveline()",
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L286"
+      "source_location": "L296"
     },
     {
       "id": "lib_state_close",
@@ -244,18 +232,6 @@
       "norm_label": "coredrawactive()",
       "source_file": "lib/state.ts",
       "source_location": "L27"
-    },
-    {
-      "id": "lib_state_open",
-      "label": "open()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "MeasurePane.vue",
-      "file_type": "code",
-      "norm_label": "open()",
-      "source_file": "lib/state.ts",
-      "source_location": "L33"
     },
     {
       "id": "lib_state_setunitfromprofile",
@@ -387,7 +363,7 @@
       "file_type": "code",
       "norm_label": "cancelcoredraw()",
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L83"
+      "source_location": "L93"
     },
     {
       "id": "lib_mount_toggle_mountmeasuretoggle",
@@ -579,7 +555,55 @@
       "file_type": "code",
       "norm_label": "renderchart()",
       "source_file": "components/MeasureProfile.vue",
-      "source_location": "L333"
+      "source_location": "L346"
+    },
+    {
+      "id": "lib_elevation_loadprofile",
+      "label": "loadProfile()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "MeasureProfile.vue",
+      "file_type": "code",
+      "norm_label": "loadprofile()",
+      "source_file": "lib/elevation.ts",
+      "source_location": "L40"
+    },
+    {
+      "id": "lib_elevation_tilesurl",
+      "label": "tilesURL()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "MeasureProfile.vue",
+      "file_type": "code",
+      "norm_label": "tilesurl()",
+      "source_file": "lib/elevation.ts",
+      "source_location": "L29"
+    },
+    {
+      "id": "lib_profile_stats_formatelevation",
+      "label": "formatElevation()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "MeasureProfile.vue",
+      "file_type": "code",
+      "norm_label": "formatelevation()",
+      "source_file": "lib/profile-stats.ts",
+      "source_location": "L59"
+    },
+    {
+      "id": "test_profile_stats_spec_profile",
+      "label": "profile()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "MeasureProfile.vue",
+      "file_type": "code",
+      "norm_label": "profile()",
+      "source_file": "test/profile-stats.spec.ts",
+      "source_location": "L5"
     },
     {
       "id": "lib_geometry_haversinekm",
@@ -652,18 +676,6 @@
       "norm_label": ".constructor()",
       "source_file": "lib/measure-draw.ts",
       "source_location": "L82"
-    },
-    {
-      "id": "lib_core_bridge_snappoints",
-      "label": "snapPoints()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "MeasureDraw",
-      "file_type": "code",
-      "norm_label": "snappoints()",
-      "source_file": "lib/core-bridge.ts",
-      "source_location": "L256"
     },
     {
       "id": "lib_geometry_istypingtarget",
@@ -867,7 +879,7 @@
       "file_type": "code",
       "norm_label": "clampgraphzoom()",
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L166"
+      "source_location": "L176"
     },
     {
       "id": "lib_core_bridge_coreroutinggraph",
@@ -879,7 +891,7 @@
       "file_type": "code",
       "norm_label": "coreroutinggraph()",
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L102"
+      "source_location": "L112"
     },
     {
       "id": "lib_core_bridge_drawtool",
@@ -891,7 +903,7 @@
       "file_type": "code",
       "norm_label": "drawtool()",
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L55"
+      "source_location": "L65"
     },
     {
       "id": "lib_core_bridge_expandgraphforviewport",
@@ -903,7 +915,19 @@
       "file_type": "code",
       "norm_label": "expandgraphforviewport()",
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L347"
+      "source_location": "L357"
+    },
+    {
+      "id": "lib_core_bridge_populatesnappinglayers",
+      "label": "populateSnappingLayers()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "core-bridge.ts",
+      "file_type": "code",
+      "norm_label": "populatesnappinglayers()",
+      "source_file": "lib/core-bridge.ts",
+      "source_location": "L132"
     },
     {
       "id": "lib_core_bridge_resetsnappinglayer",
@@ -915,7 +939,7 @@
       "file_type": "code",
       "norm_label": "resetsnappinglayer()",
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L232"
+      "source_location": "L242"
     },
     {
       "id": "lib_core_bridge_selectsnappinglayer",
@@ -927,7 +951,7 @@
       "file_type": "code",
       "norm_label": "selectsnappinglayer()",
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L196"
+      "source_location": "L206"
     },
     {
       "id": "lib_core_bridge_snappinglayer",
@@ -939,7 +963,7 @@
       "file_type": "code",
       "norm_label": "snappinglayer()",
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L141"
+      "source_location": "L151"
     },
     {
       "id": "lib_core_bridge_snappingoptions",
@@ -951,67 +975,55 @@
       "file_type": "code",
       "norm_label": "snappingoptions()",
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L133"
+      "source_location": "L143"
+    },
+    {
+      "id": "lib_core_bridge_snappoints",
+      "label": "snapPoints()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "core-bridge.ts",
+      "file_type": "code",
+      "norm_label": "snappoints()",
+      "source_file": "lib/core-bridge.ts",
+      "source_location": "L266"
+    },
+    {
+      "id": "lib_state_open",
+      "label": "open()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "core-bridge.ts",
+      "file_type": "code",
+      "norm_label": "open()",
+      "source_file": "lib/state.ts",
+      "source_location": "L33"
+    },
+    {
+      "id": "lib_terrain_id_terrainidfromvalue",
+      "label": "terrainIdFromValue()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "core-bridge.ts",
+      "file_type": "code",
+      "norm_label": "terrainidfromvalue()",
+      "source_file": "lib/terrain-id.ts",
+      "source_location": "L1"
     },
     {
       "id": "lib_core_bridge_terrainbasemapid",
       "label": "terrainBasemapId()",
       "_callable": true,
       "_origin": "ast",
-      "community": 5,
-      "community_name": "core-bridge.ts",
+      "community": 8,
+      "community_name": "terrainBasemapId",
       "file_type": "code",
       "norm_label": "terrainbasemapid()",
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L42"
-    },
-    {
-      "id": "lib_elevation_loadprofile",
-      "label": "loadProfile()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "elevation.ts",
-      "file_type": "code",
-      "norm_label": "loadprofile()",
-      "source_file": "lib/elevation.ts",
-      "source_location": "L40"
-    },
-    {
-      "id": "lib_elevation_tilesurl",
-      "label": "tilesURL()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "elevation.ts",
-      "file_type": "code",
-      "norm_label": "tilesurl()",
-      "source_file": "lib/elevation.ts",
-      "source_location": "L29"
-    },
-    {
-      "id": "lib_profile_stats_formatelevation",
-      "label": "formatElevation()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "elevation.ts",
-      "file_type": "code",
-      "norm_label": "formatelevation()",
-      "source_file": "lib/profile-stats.ts",
-      "source_location": "L59"
-    },
-    {
-      "id": "test_profile_stats_spec_profile",
-      "label": "profile()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "elevation.ts",
-      "file_type": "code",
-      "norm_label": "profile()",
-      "source_file": "test/profile-stats.spec.ts",
-      "source_location": "L5"
+      "source_location": "L49"
     },
     {
       "id": "components_measurepane",
@@ -1355,7 +1367,7 @@
       "node_kind": "heading",
       "norm_label": "import paths",
       "source_file": "README.md",
-      "source_location": "L62"
+      "source_location": "L77"
     },
     {
       "id": "readme_install",
@@ -1379,7 +1391,7 @@
       "node_kind": "heading",
       "norm_label": "layout",
       "source_file": "README.md",
-      "source_location": "L50"
+      "source_location": "L65"
     },
     {
       "id": "readme_runtime_checklist",
@@ -1391,7 +1403,7 @@
       "node_kind": "heading",
       "norm_label": "runtime checklist",
       "source_file": "README.md",
-      "source_location": "L93"
+      "source_location": "L108"
     },
     {
       "id": "readme_status",
@@ -1415,7 +1427,7 @@
       "node_kind": "heading",
       "norm_label": "still to verify",
       "source_file": "README.md",
-      "source_location": "L135"
+      "source_location": "L150"
     },
     {
       "id": "readme_verification",
@@ -1427,7 +1439,7 @@
       "node_kind": "heading",
       "norm_label": "verification",
       "source_file": "README.md",
-      "source_location": "L75"
+      "source_location": "L90"
     },
     {
       "id": "vitest_config",
@@ -1573,6 +1585,17 @@
       "source_location": "L186"
     },
     {
+      "id": "components_measureprofile_stats",
+      "label": "stats",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "MeasureProfile.vue",
+      "file_type": "code",
+      "norm_label": "stats",
+      "source_file": "components/MeasureProfile.vue",
+      "source_location": "L192"
+    },
+    {
       "id": "components_measureprofile_terrainid",
       "label": "terrainId",
       "_origin": "ast",
@@ -1582,6 +1605,39 @@
       "norm_label": "terrainid",
       "source_file": "components/MeasureProfile.vue",
       "source_location": "L175"
+    },
+    {
+      "id": "lib_elevation",
+      "label": "elevation.ts",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "MeasureProfile.vue",
+      "file_type": "code",
+      "norm_label": "elevation.ts",
+      "source_file": "lib/elevation.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "lib_profile_stats",
+      "label": "profile-stats.ts",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "MeasureProfile.vue",
+      "file_type": "code",
+      "norm_label": "profile-stats.ts",
+      "source_file": "lib/profile-stats.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "test_profile_stats_spec",
+      "label": "profile-stats.spec.ts",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "MeasureProfile.vue",
+      "file_type": "code",
+      "norm_label": "profile-stats.spec.ts",
+      "source_file": "test/profile-stats.spec.ts",
+      "source_location": "L1"
     },
     {
       "id": "lib_geometry",
@@ -1672,28 +1728,6 @@
       "source_location": "L1"
     },
     {
-      "id": "test_keyboard_spec",
-      "label": "keyboard.spec.ts",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "measure-draw.ts",
-      "file_type": "code",
-      "norm_label": "keyboard.spec.ts",
-      "source_file": "test/keyboard.spec.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "ref_vitest",
-      "label": "vitest",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "measure-draw.ts",
-      "file_type": "concept",
-      "norm_label": "vitest",
-      "source_file": "package.json",
-      "source_location": "L13"
-    },
-    {
       "id": "lib_measure_draw_rationale_185",
       "label": "NOTE: deliberately does NOT persist. Core's equivalent handler",
       "_origin": "ast",
@@ -1716,6 +1750,17 @@
       "source_location": "L281"
     },
     {
+      "id": "lib_measure_draw_measuredraw_onmoveend",
+      "label": ".onMoveEnd()",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "MeasureDraw",
+      "file_type": "code",
+      "norm_label": ".onmoveend()",
+      "source_file": "lib/measure-draw.ts",
+      "source_location": "L241"
+    },
+    {
       "id": "lib_measure_draw_measuredraw_swallowclick",
       "label": ".swallowClick()",
       "_origin": "ast",
@@ -1736,7 +1781,7 @@
       "node_kind": "heading",
       "norm_label": "keyboard",
       "source_file": "README.md",
-      "source_location": "L104"
+      "source_location": "L119"
     },
     {
       "id": "components_measurepane_snapoptions",
@@ -1769,7 +1814,7 @@
       "file_type": "code",
       "norm_label": "core_static_mode",
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L18"
+      "source_location": "L19"
     },
     {
       "id": "lib_core_bridge_no_snapping",
@@ -1780,61 +1825,28 @@
       "file_type": "code",
       "norm_label": "no_snapping",
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L21"
+      "source_location": "L22"
     },
     {
-      "id": "lib_measure_draw_measuredraw_onmoveend",
-      "label": ".onMoveEnd()",
+      "id": "lib_terrain_id",
+      "label": "terrain-id.ts",
       "_origin": "ast",
       "community": 5,
       "community_name": "core-bridge.ts",
       "file_type": "code",
-      "norm_label": ".onmoveend()",
-      "source_file": "lib/measure-draw.ts",
-      "source_location": "L241"
-    },
-    {
-      "id": "components_measureprofile_stats",
-      "label": "stats",
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "elevation.ts",
-      "file_type": "code",
-      "norm_label": "stats",
-      "source_file": "components/MeasureProfile.vue",
-      "source_location": "L192"
-    },
-    {
-      "id": "lib_elevation",
-      "label": "elevation.ts",
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "elevation.ts",
-      "file_type": "code",
-      "norm_label": "elevation.ts",
-      "source_file": "lib/elevation.ts",
+      "norm_label": "terrain-id.ts",
+      "source_file": "lib/terrain-id.ts",
       "source_location": "L1"
     },
     {
-      "id": "lib_profile_stats",
-      "label": "profile-stats.ts",
+      "id": "test_terrain_id_spec",
+      "label": "terrain-id.spec.ts",
       "_origin": "ast",
-      "community": 6,
-      "community_name": "elevation.ts",
+      "community": 5,
+      "community_name": "core-bridge.ts",
       "file_type": "code",
-      "norm_label": "profile-stats.ts",
-      "source_file": "lib/profile-stats.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "test_profile_stats_spec",
-      "label": "profile-stats.spec.ts",
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "elevation.ts",
-      "file_type": "code",
-      "norm_label": "profile-stats.spec.ts",
-      "source_file": "test/profile-stats.spec.ts",
+      "norm_label": "terrain-id.spec.ts",
+      "source_file": "test/terrain-id.spec.ts",
       "source_location": "L1"
     },
     {
@@ -1981,11 +1993,44 @@
       "source_location": "L3"
     },
     {
+      "id": "test_keyboard_spec",
+      "label": "keyboard.spec.ts",
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "package.json",
+      "file_type": "code",
+      "norm_label": "keyboard.spec.ts",
+      "source_file": "test/keyboard.spec.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "test_terrain_config_spec",
+      "label": "terrain-config.spec.ts",
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "package.json",
+      "file_type": "code",
+      "norm_label": "terrain-config.spec.ts",
+      "source_file": "test/terrain-config.spec.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "ref_vitest",
+      "label": "vitest",
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "package.json",
+      "file_type": "concept",
+      "norm_label": "vitest",
+      "source_file": "package.json",
+      "source_location": "L13"
+    },
+    {
       "id": "docs_testing",
       "label": "TESTING.md",
       "_origin": "ast",
       "community": 8,
-      "community_name": "Testing",
+      "community_name": "terrainBasemapId",
       "file_type": "document",
       "node_kind": "page",
       "norm_label": "testing.md",
@@ -1997,55 +2042,55 @@
       "label": "A landmine worth remembering",
       "_origin": "ast",
       "community": 8,
-      "community_name": "Testing",
+      "community_name": "terrainBasemapId",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "a landmine worth remembering",
       "source_file": "docs/TESTING.md",
-      "source_location": "L63"
+      "source_location": "L66"
     },
     {
       "id": "docs_testing_lint_typecheck_needs_a_real_directory",
       "label": "Lint + typecheck \u2014 needs a real directory",
       "_origin": "ast",
       "community": 8,
-      "community_name": "Testing",
+      "community_name": "terrainBasemapId",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "lint + typecheck \u2014 needs a real directory",
       "source_file": "docs/TESTING.md",
-      "source_location": "L38"
+      "source_location": "L41"
     },
     {
       "id": "docs_testing_not_covered_by_any_automated_test",
       "label": "Not covered by any automated test",
       "_origin": "ast",
       "community": 8,
-      "community_name": "Testing",
+      "community_name": "terrainBasemapId",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "not covered by any automated test",
       "source_file": "docs/TESTING.md",
-      "source_location": "L72"
+      "source_location": "L75"
     },
     {
       "id": "docs_testing_notes_on_two_assertions_that_look_wrong",
       "label": "Notes on two assertions that look wrong",
       "_origin": "ast",
       "community": 8,
-      "community_name": "Testing",
+      "community_name": "terrainBasemapId",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "notes on two assertions that look wrong",
       "source_file": "docs/TESTING.md",
-      "source_location": "L30"
+      "source_location": "L33"
     },
     {
       "id": "docs_testing_testing",
       "label": "Testing",
       "_origin": "ast",
       "community": 8,
-      "community_name": "Testing",
+      "community_name": "terrainBasemapId",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "testing",
@@ -2057,7 +2102,7 @@
       "label": "Unit tests \u2014 run here, standalone",
       "_origin": "ast",
       "community": 8,
-      "community_name": "Testing",
+      "community_name": "terrainBasemapId",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "unit tests \u2014 run here, standalone",
@@ -2065,16 +2110,16 @@
       "source_location": "L3"
     },
     {
-      "id": "docs_testing_why_only_those_three",
-      "label": "Why only those three",
+      "id": "docs_testing_why_these_modules",
+      "label": "Why these modules",
       "_origin": "ast",
       "community": 8,
-      "community_name": "Testing",
+      "community_name": "terrainBasemapId",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "why only those three",
+      "norm_label": "why these modules",
       "source_file": "docs/TESTING.md",
-      "source_location": "L20"
+      "source_location": "L22"
     },
     {
       "id": "scripts_check_like_docker",
@@ -2144,17 +2189,6 @@
       "type": "external"
     },
     {
-      "id": "ref_node_fs",
-      "label": "ref_node_fs",
-      "community": 1,
-      "community_name": "index.ts",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "ref_node_fs",
-      "source_file": "",
-      "type": "external"
-    },
-    {
       "id": "ref_plugin_ts",
       "label": "ref_plugin_ts",
       "community": 1,
@@ -2188,6 +2222,17 @@
       "type": "external"
     },
     {
+      "id": "ref_capacitor_preferences",
+      "label": "ref_capacitor_preferences",
+      "community": 2,
+      "community_name": "MeasureProfile.vue",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "ref_capacitor_preferences",
+      "source_file": "",
+      "type": "external"
+    },
+    {
       "id": "ref_chart_js",
       "label": "ref_chart_js",
       "community": 2,
@@ -2199,6 +2244,17 @@
       "type": "external"
     },
     {
+      "id": "ref_geojson",
+      "label": "ref_geojson",
+      "community": 2,
+      "community_name": "MeasureProfile.vue",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "ref_geojson",
+      "source_file": "",
+      "type": "external"
+    },
+    {
       "id": "ref_src_components_cloudtak_util_slidedownheader_vue",
       "label": "ref_src_components_cloudtak_util_slidedownheader_vue",
       "community": 2,
@@ -2206,6 +2262,17 @@
       "external": true,
       "file_type": "concept",
       "norm_label": "ref_src_components_cloudtak_util_slidedownheader_vue",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "ref_src_std_ts",
+      "label": "ref_src_std_ts",
+      "community": 2,
+      "community_name": "MeasureProfile.vue",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "ref_src_std_ts",
       "source_file": "",
       "type": "external"
     },
@@ -2265,17 +2332,6 @@
       "type": "external"
     },
     {
-      "id": "ref_geojson",
-      "label": "ref_geojson",
-      "community": 5,
-      "community_name": "core-bridge.ts",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "ref_geojson",
-      "source_file": "",
-      "type": "external"
-    },
-    {
       "id": "ref_src_base_config_ts",
       "label": "ref_src_base_config_ts",
       "community": 5,
@@ -2309,24 +2365,13 @@
       "type": "external"
     },
     {
-      "id": "ref_capacitor_preferences",
-      "label": "ref_capacitor_preferences",
-      "community": 6,
-      "community_name": "elevation.ts",
+      "id": "ref_node_fs",
+      "label": "ref_node_fs",
+      "community": 7,
+      "community_name": "package.json",
       "external": true,
       "file_type": "concept",
-      "norm_label": "ref_capacitor_preferences",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "ref_src_std_ts",
-      "label": "ref_src_std_ts",
-      "community": 6,
-      "community_name": "elevation.ts",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "ref_src_std_ts",
+      "norm_label": "ref_node_fs",
       "source_file": "",
       "type": "external"
     }
@@ -2466,7 +2511,7 @@
     },
     {
       "source": "components_measureprofile_refresh",
-      "target": "components_measureprofile_destroychart",
+      "target": "lib_core_bridge_terrainbasemapid",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -2478,6 +2523,18 @@
     },
     {
       "source": "components_measureprofile_refresh",
+      "target": "components_measureprofile_destroychart",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "components/MeasureProfile.vue",
+      "source_location": "L300",
+      "weight": 1.0
+    },
+    {
+      "source": "components_measureprofile_refresh",
       "target": "components_measureprofile_renderchart",
       "relation": "calls",
       "_origin": "ast",
@@ -2485,7 +2542,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "components/MeasureProfile.vue",
-      "source_location": "L306",
+      "source_location": "L319",
       "weight": 1.0
     },
     {
@@ -2497,7 +2554,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "components/MeasureProfile.vue",
-      "source_location": "L319",
+      "source_location": "L332",
       "weight": 1.0
     },
     {
@@ -2509,7 +2566,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "components/MeasureProfile.vue",
-      "source_location": "L335",
+      "source_location": "L348",
       "weight": 1.0
     },
     {
@@ -2521,7 +2578,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "components/MeasureProfile.vue",
-      "source_location": "L343",
+      "source_location": "L356",
       "weight": 1.0
     },
     {
@@ -2533,7 +2590,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "components/MeasureProfile.vue",
-      "source_location": "L344",
+      "source_location": "L357",
       "weight": 1.0
     },
     {
@@ -2545,7 +2602,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "components/MeasureProfile.vue",
-      "source_location": "L388",
+      "source_location": "L401",
       "weight": 1.0
     },
     {
@@ -2557,7 +2614,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "components/MeasureProfile.vue",
-      "source_location": "L399",
+      "source_location": "L412",
       "weight": 1.0
     },
     {
@@ -2641,7 +2698,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L84",
+      "source_location": "L94",
       "weight": 1.0
     },
     {
@@ -2653,7 +2710,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L167",
+      "source_location": "L177",
       "weight": 1.0
     },
     {
@@ -2665,7 +2722,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L103",
+      "source_location": "L113",
       "weight": 1.0
     },
     {
@@ -2677,7 +2734,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L348",
+      "source_location": "L358",
       "weight": 1.0
     },
     {
@@ -2689,7 +2746,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L354",
+      "source_location": "L364",
       "weight": 1.0
     },
     {
@@ -2701,7 +2758,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L74",
+      "source_location": "L84",
       "weight": 1.0
     },
     {
@@ -2713,7 +2770,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L123",
+      "source_location": "L133",
       "weight": 1.0
     },
     {
@@ -2725,7 +2782,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L126",
+      "source_location": "L136",
       "weight": 1.0
     },
     {
@@ -2737,7 +2794,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L233",
+      "source_location": "L243",
       "weight": 1.0
     },
     {
@@ -2749,7 +2806,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L235",
+      "source_location": "L245",
       "weight": 1.0
     },
     {
@@ -2761,7 +2818,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L197",
+      "source_location": "L207",
       "weight": 1.0
     },
     {
@@ -2773,7 +2830,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L212",
+      "source_location": "L222",
       "weight": 1.0
     },
     {
@@ -2785,7 +2842,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L142",
+      "source_location": "L152",
       "weight": 1.0
     },
     {
@@ -2797,7 +2854,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L134",
+      "source_location": "L144",
+      "weight": 1.0
+    },
+    {
+      "source": "lib_core_bridge_terrainbasemapid",
+      "target": "lib_terrain_id_terrainidfromvalue",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "lib/core-bridge.ts",
+      "source_location": "L52",
       "weight": 1.0
     },
     {
@@ -3265,7 +3334,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "components/MeasureProfile.vue",
-      "source_location": "L333",
+      "source_location": "L346",
       "weight": 1.0
     },
     {
@@ -3629,6 +3698,18 @@
       "weight": 1.0
     },
     {
+      "source": "lib_core_bridge",
+      "target": "lib_terrain_id_terrainidfromvalue",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "lib/core-bridge.ts",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
       "source": "lib_measure_draw",
       "target": "lib_geometry_empty_measurement",
       "relation": "imports",
@@ -3926,6 +4007,18 @@
       "context": "import",
       "source_file": "test/profile-stats.spec.ts",
       "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "test_terrain_id_spec",
+      "target": "lib_terrain_id_terrainidfromvalue",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "test/terrain-id.spec.ts",
+      "source_location": "L2",
       "weight": 1.0
     },
     {
@@ -4401,6 +4494,18 @@
       "weight": 1.0
     },
     {
+      "source": "lib_core_bridge",
+      "target": "lib_terrain_id",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "lib/core-bridge.ts",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
       "source": "lib_elevation",
       "target": "ref_capacitor_preferences",
       "relation": "imports_from",
@@ -4703,6 +4808,54 @@
       "context": "import",
       "source_file": "test/profile-stats.spec.ts",
       "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "test_terrain_config_spec",
+      "target": "ref_node_fs",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "test/terrain-config.spec.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "test_terrain_config_spec",
+      "target": "ref_vitest",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "test/terrain-config.spec.ts",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "test_terrain_id_spec",
+      "target": "ref_vitest",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "test/terrain-id.spec.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "test_terrain_id_spec",
+      "target": "lib_terrain_id",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "test/terrain-id.spec.ts",
+      "source_location": "L2",
       "weight": 1.0
     },
     {
@@ -5265,7 +5418,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/TESTING.md",
-      "source_location": "L38",
+      "source_location": "L41",
       "weight": 1.0
     },
     {
@@ -5276,7 +5429,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/TESTING.md",
-      "source_location": "L63",
+      "source_location": "L66",
       "weight": 1.0
     },
     {
@@ -5287,18 +5440,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/TESTING.md",
-      "source_location": "L72",
+      "source_location": "L75",
       "weight": 1.0
     },
     {
       "source": "docs_testing_unit_tests_run_here_standalone",
-      "target": "docs_testing_why_only_those_three",
+      "target": "docs_testing_why_these_modules",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/TESTING.md",
-      "source_location": "L20",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -5309,7 +5462,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/TESTING.md",
-      "source_location": "L30",
+      "source_location": "L33",
       "weight": 1.0
     },
     {
@@ -5331,7 +5484,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L102",
+      "source_location": "L112",
       "weight": 1.0
     },
     {
@@ -5342,7 +5495,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L122",
+      "source_location": "L132",
       "weight": 1.0
     },
     {
@@ -5353,7 +5506,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L133",
+      "source_location": "L143",
       "weight": 1.0
     },
     {
@@ -5364,7 +5517,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L141",
+      "source_location": "L151",
       "weight": 1.0
     },
     {
@@ -5375,7 +5528,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L166",
+      "source_location": "L176",
       "weight": 1.0
     },
     {
@@ -5386,7 +5539,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L18",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -5397,7 +5550,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L196",
+      "source_location": "L206",
       "weight": 1.0
     },
     {
@@ -5408,7 +5561,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L21",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -5419,7 +5572,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L23",
+      "source_location": "L24",
       "weight": 1.0
     },
     {
@@ -5430,7 +5583,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L232",
+      "source_location": "L242",
       "weight": 1.0
     },
     {
@@ -5441,7 +5594,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L256",
+      "source_location": "L266",
       "weight": 1.0
     },
     {
@@ -5452,7 +5605,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L286",
+      "source_location": "L296",
       "weight": 1.0
     },
     {
@@ -5463,7 +5616,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L347",
+      "source_location": "L357",
       "weight": 1.0
     },
     {
@@ -5474,7 +5627,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L42",
+      "source_location": "L49",
       "weight": 1.0
     },
     {
@@ -5485,7 +5638,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L55",
+      "source_location": "L65",
       "weight": 1.0
     },
     {
@@ -5496,7 +5649,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L73",
+      "source_location": "L83",
       "weight": 1.0
     },
     {
@@ -5507,7 +5660,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "lib/core-bridge.ts",
-      "source_location": "L83",
+      "source_location": "L93",
       "weight": 1.0
     },
     {
@@ -5863,6 +6016,17 @@
       "weight": 1.0
     },
     {
+      "source": "lib_terrain_id",
+      "target": "lib_terrain_id_terrainidfromvalue",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "lib/terrain-id.ts",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
       "source": "lib_toggle_host",
       "target": "lib_toggle_host_measure_bottom_bar_key",
       "relation": "contains",
@@ -6139,24 +6303,24 @@
     },
     {
       "source": "readme_cloudtak_plugin_measure",
+      "target": "readme_runtime_checklist",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L108",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_cloudtak_plugin_measure",
       "target": "readme_keyboard",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L104",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_cloudtak_plugin_measure",
-      "target": "readme_still_to_verify",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L135",
+      "source_location": "L119",
       "weight": 1.0
     },
     {
@@ -6172,13 +6336,24 @@
     },
     {
       "source": "readme_cloudtak_plugin_measure",
+      "target": "readme_still_to_verify",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L150",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_cloudtak_plugin_measure",
       "target": "readme_layout",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L50",
+      "source_location": "L65",
       "weight": 1.0
     },
     {
@@ -6189,18 +6364,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L62",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_cloudtak_plugin_measure",
-      "target": "readme_verification",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L75",
+      "source_location": "L77",
       "weight": 1.0
     },
     {
@@ -6216,13 +6380,13 @@
     },
     {
       "source": "readme_cloudtak_plugin_measure",
-      "target": "readme_runtime_checklist",
+      "target": "readme_verification",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L93",
+      "source_location": "L90",
       "weight": 1.0
     },
     {
@@ -6568,7 +6732,7 @@
       "confidence_score": 0.95,
       "context": "disable",
       "source_file": "README.md",
-      "source_location": "L54",
+      "source_location": "L69",
       "weight": 1.0
     },
     {
@@ -6580,7 +6744,7 @@
       "confidence_score": 0.95,
       "context": "enable",
       "source_file": "README.md",
-      "source_location": "L54",
+      "source_location": "L69",
       "weight": 1.0
     },
     {
@@ -6604,7 +6768,7 @@
       "confidence_score": 0.95,
       "context": "finish",
       "source_file": "README.md",
-      "source_location": "L114",
+      "source_location": "L129",
       "weight": 1.0
     },
     {
@@ -6616,7 +6780,7 @@
       "confidence_score": 0.95,
       "context": "install",
       "source_file": "README.md",
-      "source_location": "L54",
+      "source_location": "L69",
       "weight": 1.0
     },
     {
@@ -6628,7 +6792,7 @@
       "confidence_score": 0.95,
       "context": "isTypingTarget",
       "source_file": "README.md",
-      "source_location": "L117",
+      "source_location": "L132",
       "weight": 1.0
     },
     {
@@ -6644,6 +6808,30 @@
       "weight": 1.0
     },
     {
+      "source": "docs_testing_unit_tests_run_here_standalone",
+      "target": "lib_core_bridge_terrainbasemapid",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "context": "terrainBasemapId",
+      "source_file": "docs/TESTING.md",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_install",
+      "target": "lib_core_bridge_terrainbasemapid",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "context": "terrainBasemapId",
+      "source_file": "README.md",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
       "source": "readme_keyboard",
       "target": "lib_measure_draw_measuredraw_undo",
       "relation": "references",
@@ -6652,10 +6840,10 @@
       "confidence_score": 0.95,
       "context": "undo()",
       "source_file": "README.md",
-      "source_location": "L123",
+      "source_location": "L138",
       "weight": 1.0
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "3b30ce3c86b5bc8381a986d9e5283e891ecb3a67"
+  "built_at_commit": "d66180fa137cee54f29abb5a14562818360c2e7b"
 }

@@ -294,7 +294,20 @@ function destroyChart(): void {
 }
 
 async function refresh(): Promise<void> {
-    if (!terrainId.value || props.coordinates.length < 2) {
+    if (!terrainId.value) {
+        const id = await terrainBasemapId();
+        if (!id) {
+            destroyChart();
+            profile.value = null;
+            return;
+        }
+        // Assigning terrainId re-runs the watch, which calls refresh again
+        // without another config request.
+        terrainId.value = id;
+        return;
+    }
+
+    if (props.coordinates.length < 2) {
         destroyChart();
         profile.value = null;
         return;

@@ -5,9 +5,8 @@
   "3": "measure-draw.ts",
   "4": "MeasureDraw",
   "5": "core-bridge.ts",
-  "6": "elevation.ts",
   "7": "package.json",
-  "8": "Testing",
+  "8": "terrainBasemapId",
   "9": "check-like-docker.sh",
   "10": "vitest.config.ts"
 }
