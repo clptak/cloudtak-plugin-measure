@@ -103,54 +103,6 @@
                 :finished='finished'
             />
 
-            <div class='btn-list px-1 pt-2'>
-                <button
-                    class='btn btn-sm'
-                    title='Finish the line (Enter)'
-                    :disabled='finished || measurement.coordinates.length < 2'
-                    @click='surface.finish()'
-                >
-                    Finish
-                </button>
-                <button
-                    class='btn btn-sm'
-                    title='Remove the last point (Backspace)'
-                    :disabled='!undoAvailable'
-                    @click='surface.undo()'
-                >
-                    Undo
-                </button>
-                <button
-                    v-if='redoAvailable'
-                    class='btn btn-sm'
-                    title='Restore the last removed point (Cmd/Ctrl+Shift+Z)'
-                    @click='surface.redo()'
-                >
-                    Redo
-                </button>
-                <button
-                    class='btn btn-sm'
-                    :disabled='!measurement.coordinates.length'
-                    @click='surface.clear()'
-                >
-                    Clear
-                </button>
-                <button
-                    class='btn btn-sm'
-                    :disabled='measurement.coordinates.length < 2 || saving'
-                    @click='confirmingSave = true'
-                >
-                    Save as Line
-                </button>
-                <button
-                    class='btn btn-sm ms-auto'
-                    title='Exit measure mode'
-                    @click='close'
-                >
-                    Close
-                </button>
-            </div>
-
             <div
                 v-if='confirmingSave'
                 class='cloudtak-accent rounded mx-1 mt-2 px-2 py-2'
@@ -195,7 +147,7 @@
 
 <script setup lang='ts'>
 import { computed, onBeforeUnmount, ref, watch } from 'vue';
-import { surface, unit, pinia, close } from '../lib/state.ts';
+import { surface, unit, pinia, close, confirmingSave, saving } from '../lib/state.ts';
 import { snappingOptions, selectSnappingLayer, saveLine, NO_SNAPPING } from '../lib/core-bridge.ts';
 import { DISTANCE_UNITS, formatDistance, formatBearing } from '../lib/units.ts';
 import MeasureProfile from './MeasureProfile.vue';
@@ -205,8 +157,6 @@ const measurement = computed(() => {
         ?? { coordinates: [], totalKm: 0, segments: [] };
 });
 
-const undoAvailable = computed(() => surface.value?.undoAvailable.value ?? false);
-const redoAvailable = computed(() => surface.value?.redoAvailable.value ?? false);
 const finished = computed(() => surface.value?.finished.value ?? false);
 const promptNewMeasurement = computed(() => surface.value?.promptNewMeasurement.value ?? false);
 
@@ -223,8 +173,6 @@ const snapLayer = ref(NO_SNAPPING);
 // path (close() -> pane removed -> unmount -> close()) is harmless.
 onBeforeUnmount(() => close());
 
-const confirmingSave = ref(false);
-const saving = ref(false);
 const saveError = ref<string | null>(null);
 
 const defaultCallsign = computed(() => {

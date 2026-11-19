@@ -19,6 +19,11 @@ export const pinia = shallowRef<Pinia | null>(null);
 export const active = ref(false);
 export const unit = ref<DistanceUnit>('mile');
 
+// Shared between the pane body (confirm prompt) and the header actions
+// (Save as Line button), which core renders as separate components.
+export const confirmingSave = ref(false);
+export const saving = ref(false);
+
 export function setUnitFromProfile(value: unknown): void {
     unit.value = normalizeDistanceUnit(value);
 }
@@ -34,6 +39,7 @@ export function open(): void {
     const s = surface.value;
     if (!s) return;
     s.start();
+    confirmingSave.value = false;
     active.value = true;
 
     // Core only discovers snapping-capable basemaps when its own Drawing Tools

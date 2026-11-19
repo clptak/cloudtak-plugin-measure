@@ -19,6 +19,7 @@ import { cancelCoreDraw } from './lib/core-bridge.ts';
 import { mountMeasureToggle, unmountMeasureToggle } from './lib/mount-toggle.ts';
 import { attachMeasureChrome, detachMeasureChrome } from './lib/toggle-host.ts';
 import MeasurePane from './components/MeasurePane.vue';
+import MeasureActions from './components/MeasureActions.vue';
 
 const FLOAT_UID = 'measure';
 
@@ -64,6 +65,7 @@ export default class MeasurePlugin implements PluginInstance {
                     uid: FLOAT_UID,
                     name: 'Measure',
                     component: MeasurePane,
+                    actions: MeasureActions,
                     width: 420,
                     height: 560,
                 });
