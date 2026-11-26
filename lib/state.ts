@@ -10,7 +10,13 @@
 import { ref, shallowRef } from 'vue';
 import type { Pinia } from 'pinia';
 import type MeasureDraw from './measure-draw.ts';
-import { isCoreDrawActive, populateSnappingLayers, resetSnappingLayer } from './core-bridge.ts';
+import {
+    isCoreDrawActive,
+    populateSnappingLayers,
+    resetSnappingLayer,
+    selectSnappingLayer,
+    NO_SNAPPING,
+} from './core-bridge.ts';
 import { normalizeDistanceUnit } from './units.ts';
 import type { DistanceUnit } from './units.ts';
 
@@ -23,6 +29,35 @@ export const unit = ref<DistanceUnit>('mile');
 // (Save as Line button), which core renders as separate components.
 export const confirmingSave = ref(false);
 export const saving = ref(false);
+export const saveError = ref<string | null>(null);
+
+/**
+ * True when CloudTAK is in its phone layout. Core turns every floating pane
+ * into a full-screen modal there (FloatingPane.vue isModal), which hides the
+ * map the ruler needs, so the plugin shows its own bottom sheet instead.
+ */
+export const mobile = ref(false);
+
+/**
+ * Snap layer picked in the pane. Module state rather than component state so
+ * it survives the pane moving between the floating pane and the mobile sheet.
+ */
+export const snapLayer = ref(NO_SNAPPING);
+
+export async function selectSnap(layer: string): Promise<void> {
+    snapLayer.value = layer;
+    const p = pinia.value;
+    const s = surface.value;
+    if (!p || !s) return;
+
+    const ok = await selectSnappingLayer(p, layer);
+    s.setSnapLayer(ok ? layer : NO_SNAPPING);
+
+    if (!ok && layer !== NO_SNAPPING) {
+        console.warn('[measure] snapping unavailable, falling back to straight-line');
+        snapLayer.value = NO_SNAPPING;
+    }
+}
 
 export function setUnitFromProfile(value: unknown): void {
     unit.value = normalizeDistanceUnit(value);
@@ -40,6 +75,9 @@ export function open(): void {
     if (!s) return;
     s.start();
     confirmingSave.value = false;
+    saveError.value = null;
+    // The picker used to live in the pane and start fresh on every open
+    snapLayer.value = NO_SNAPPING;
     active.value = true;
 
     // Core only discovers snapping-capable basemaps when its own Drawing Tools

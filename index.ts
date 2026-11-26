@@ -17,6 +17,8 @@ import * as state from './lib/state.ts';
 import { cancelCoreDraw } from './lib/core-bridge.ts';
 import { mountMeasureToggle, unmountMeasureToggle } from './lib/mount-toggle.ts';
 import { attachMeasureChrome, detachMeasureChrome } from './lib/toggle-host.ts';
+import { mountMeasureSheet, unmountMeasureSheet } from './lib/mount-sheet.ts';
+import { hostStore } from './lib/host.ts';
 import MeasurePane from './components/MeasurePane.vue';
 import MeasureActions from './components/MeasureActions.vue';
 
@@ -25,9 +27,25 @@ const FLOAT_UID = 'measure';
 export default class MeasurePlugin implements PluginInstance {
     api: PluginAPI;
     private stopActiveWatch?: () => void;
+    private stopMobileWatch?: () => void;
+    private stopLayoutWatch?: () => void;
 
     constructor(api: PluginAPI) {
         this.api = api;
+    }
+
+    /**
+     * CloudTAK's own phone-layout flag (Map.vue sets it from screen size and
+     * device). Read reactively, so the watcher follows rotation and resizes.
+     * Before the app store exists, fall back to the same test Map.vue
+     * detectMobile() uses: either side of the window 576px or less.
+     */
+    private isMobileLayout(): boolean {
+        try {
+            return Boolean(hostStore<{ isMobileDetected?: boolean }>(this.api, 'cloudtak-app').isMobileDetected);
+        } catch {
+            return window.matchMedia('(max-width: 576px), (max-height: 576px)').matches;
+        }
     }
 
     static async install(
@@ -53,20 +71,35 @@ export default class MeasurePlugin implements PluginInstance {
             return;
         }
 
+        // CloudTAK's phone layout. Core shows every floating pane as a
+        // full-screen modal there, covering the map, so the ruler uses its own
+        // bottom sheet (MeasureSheet.vue) instead of api.float (issue #4).
+        this.stopMobileWatch = watch(() => this.isMobileLayout(), (isMobile) => {
+            state.mobile.value = isMobile;
+        }, { immediate: true });
+        mountMeasureSheet();
+
         // Opening the ruler cancels any in-progress core geometry, so we never
         // leave a half-drawn CoT behind. The reverse direction (core opening
         // closes the ruler) lives in MeasureToggle.vue.
         this.stopActiveWatch = watch(state.active, async (isActive) => {
-            if (isActive) {
-                await cancelCoreDraw(this.api.pinia);
-                this.api.float.add({
-                    uid: FLOAT_UID,
-                    name: 'Measure',
-                    component: MeasurePane,
-                    actions: MeasureActions,
-                    width: 420,
-                    height: 560,
-                });
+            if (isActive) await cancelCoreDraw(this.api.pinia);
+        });
+
+        // The floating pane is the desktop layout only. Switching layout while
+        // measuring moves the measurement between the pane and the sheet.
+        this.stopLayoutWatch = watch([state.active, state.mobile], ([isActive, isMobile]) => {
+            if (isActive && !isMobile) {
+                if (!this.api.float.has(FLOAT_UID)) {
+                    this.api.float.add({
+                        uid: FLOAT_UID,
+                        name: 'Measure',
+                        component: MeasurePane,
+                        actions: MeasureActions,
+                        width: 420,
+                        height: 560,
+                    });
+                }
             } else if (this.api.float.has(FLOAT_UID)) {
                 this.api.float.remove(FLOAT_UID);
             }
@@ -81,10 +114,14 @@ export default class MeasurePlugin implements PluginInstance {
     }
 
     async disable(): Promise<void> {
-        if (this.stopActiveWatch) {
-            this.stopActiveWatch();
-            this.stopActiveWatch = undefined;
+        for (const stop of [this.stopActiveWatch, this.stopLayoutWatch, this.stopMobileWatch]) {
+            stop?.();
         }
+        this.stopActiveWatch = undefined;
+        this.stopLayoutWatch = undefined;
+        this.stopMobileWatch = undefined;
+
+        unmountMeasureSheet();
 
         detachMeasureChrome({
             bottomBar: this.api.bottomBar,

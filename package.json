@@ -1,6 +1,6 @@
 {
     "name": "cloudtak-plugin-measure",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "cloudtak": {
         "name": "Measure"
     },
