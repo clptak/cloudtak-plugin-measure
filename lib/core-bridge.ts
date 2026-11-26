@@ -11,8 +11,8 @@
 import type { Pinia } from 'pinia';
 import type { Position } from 'geojson';
 import { v4 as uuid } from 'uuid';
-import { useMapStore } from '../../../src/stores/map.ts';
-import Config from '../../../src/base/config.ts';
+import type { useMapStore } from '../../../src/stores/map.ts';
+import { hostStore, std } from './host.ts';
 import { terrainIdFromValue } from './terrain-id.ts';
 
 /** Mirrors DrawToolMode.STATIC in api/web/src/stores/modules/draw.ts:36 */
@@ -54,31 +54,27 @@ let rulerPaintedNetwork = false;
  * undefined when none is set. Used by the elevation profile API; does not
  * require MapLibre 3D terrain to be enabled.
  *
- * `Config.list` with a null default writes that null into IndexedDB. The next
- * read treats the row as a cache hit and never asks the server, so an admin
- * setting the key later stays invisible. `refresh` always hits the network
- * and overwrites that row when the server returns an id. The cache is used
- * only when the refresh request itself fails.
+ * Always asks the server, so an admin setting the key later is seen. There is
+ * no cached fallback: the elevation profile needs the server anyway.
  */
 export async function terrainBasemapId(): Promise<number | undefined> {
     try {
-        const cfg = await Config.refresh(['map::terrain']);
+        const cfg = await std('/api/config?keys=map::terrain') as Record<string, unknown>;
         return terrainIdFromValue(cfg['map::terrain']);
     } catch (err) {
         console.warn('[measure] failed to read terrain basemap config', err);
-        try {
-            const cached = await Config.list(['map::terrain']);
-            return terrainIdFromValue(cached['map::terrain']);
-        } catch (cacheErr) {
-            console.warn('[measure] failed to read cached terrain basemap config', cacheErr);
-            return undefined;
-        }
+        return undefined;
     }
+}
+
+/** CloudTAK's live map store, which the Plugin API does not fully expose. */
+function useCoreMap(pinia: Pinia): ReturnType<typeof useMapStore> {
+    return hostStore<ReturnType<typeof useMapStore>>({ pinia }, 'cloudtak');
 }
 
 function drawTool(pinia: Pinia): CoreDrawTool | undefined {
     try {
-        const mapStore = useMapStore(pinia);
+        const mapStore = useCoreMap(pinia);
         return (mapStore as unknown as { draw?: CoreDrawTool }).draw;
     } catch {
         return undefined;
@@ -192,7 +188,7 @@ function clampGraphZoom(pinia: Pinia): void {
     if (!draw?.route || typeof draw.route.zoom !== 'number') return;
 
     try {
-        const mapStore = useMapStore(pinia);
+        const mapStore = useCoreMap(pinia);
         const mapZoom = mapStore.map.getZoom();
 
         const clamped = Math.min(
@@ -326,7 +322,7 @@ export async function snapPoints(
     bounds: [number, number][]
 ): Promise<Set<[number, number]>> {
     try {
-        const mapStore = useMapStore(pinia);
+        const mapStore = useCoreMap(pinia);
         const worker = (mapStore as unknown as {
             worker?: {
                 db?: {
@@ -359,7 +355,7 @@ export async function saveLine(
     if (coordinates.length < 2) return undefined;
 
     try {
-        const mapStore = useMapStore(pinia);
+        const mapStore = useCoreMap(pinia);
         const store = mapStore as unknown as {
             worker?: {
                 db?: {

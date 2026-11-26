@@ -1,12 +1,16 @@
 {
     "name": "cloudtak-plugin-measure",
-    "version": "0.1.0",
+    "version": "0.2.0",
+    "cloudtak": {
+        "name": "Measure"
+    },
     "description": "Caltopo-style ruler for CloudTAK — distance, bearing and terrain profile without creating a CoT feature",
     "type": "module",
     "main": "index.ts",
     "license": "ISC",
     "scripts": {
         "test": "vitest run",
+        "bundle": "node $HOME/.claude/skills/cloudtak-plugin-bundle/scripts/build.mjs .",
         "test:watch": "vitest"
     },
     "devDependencies": {

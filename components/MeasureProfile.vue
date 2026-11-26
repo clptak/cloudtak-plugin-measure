@@ -157,7 +157,7 @@ import type { ChartData, ChartOptions, TooltipItem } from 'chart.js';
 import Chart from 'chart.js/auto';
 import { IconChartLine, IconArrowUp, IconArrowDown } from '@tabler/icons-vue';
 import { TablerBadge, TablerLoading } from '@tak-ps/vue-tabler';
-import SlideDownHeader from '../../../src/components/CloudTAK/util/SlideDownHeader.vue';
+import SlideDownHeader from './SlideDownHeader.vue';
 import { terrainBasemapId } from '../lib/core-bridge.ts';
 import { unit as distanceUnit } from '../lib/state.ts';
 import { loadProfile, profileStats, type ElevationProfile } from '../lib/elevation.ts';

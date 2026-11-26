@@ -20,7 +20,7 @@ import type { LineString, Position } from 'geojson';
 import * as terraDraw from 'terra-draw';
 import { TerraDrawMapLibreGLAdapter } from 'terra-draw-maplibre-gl-adapter';
 import { TerraDrawRouteSnapMode } from 'terra-draw-route-snap-mode';
-import * as mapgl from 'maplibre-gl';
+import type * as mapgl from 'maplibre-gl';
 import { v4 as randomUUID } from 'uuid';
 import {
     measure,
@@ -153,8 +153,6 @@ export default class MeasureDraw {
                 map: this.map,
                 // Namespaces every source/layer as `measure-*` instead of `td-*`
                 prefixId: PREFIX,
-                // @ts-expect-error same cast core uses in draw.ts:260
-                lib: mapgl,
             }),
             idStrategy: {
                 isValidId: (id: string | number): boolean => typeof id === 'string',

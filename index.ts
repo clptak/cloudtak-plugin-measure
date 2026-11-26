@@ -11,7 +11,6 @@
 import type { App } from 'vue';
 import { watch } from 'vue';
 import type { PluginAPI, PluginInstance } from '../../plugin.ts';
-import ProfileConfig from '../../src/base/profile.ts';
 
 import MeasureDraw from './lib/measure-draw.ts';
 import * as state from './lib/state.ts';
@@ -42,8 +41,7 @@ export default class MeasurePlugin implements PluginInstance {
         state.pinia.value = this.api.pinia;
 
         try {
-            const displayDistance = await ProfileConfig.get('display_distance');
-            state.setUnitFromProfile(displayDistance?.value);
+            state.setUnitFromProfile(await this.api.profile.get('display_distance'));
         } catch {
             // Fall back to the default ('mile') — units are cosmetic
         }
