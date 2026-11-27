@@ -1,0 +1,13 @@
+name: Bundle
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  bundle:
+    uses: clptak/cloudtak-plugin-bundle/.github/workflows/build.yml@main
+    permissions:
+      contents: write
+    with:
+      cloudtak-ref: v14.3.0
