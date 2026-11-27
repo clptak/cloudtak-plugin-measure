@@ -10,4 +10,4 @@ jobs:
     permissions:
       contents: write
     with:
-      cloudtak-ref: v14.3.0
+      cloudtak-ref: v14.4.1
